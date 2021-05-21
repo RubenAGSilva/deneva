@@ -5,15 +5,15 @@
 /***********************************************/
 // Simulation + Hardware
 /***********************************************/
-#define NODE_CNT 2
-#define THREAD_CNT 4
+#define NODE_CNT 1
+#define THREAD_CNT 2
 #define REM_THREAD_CNT THREAD_CNT
 #define SEND_THREAD_CNT THREAD_CNT
-#define CORE_CNT 8
+#define CORE_CNT 1
 // PART_CNT should be at least NODE_CNT
 #define PART_CNT NODE_CNT
 #define CLIENT_NODE_CNT NODE_CNT
-#define CLIENT_THREAD_CNT 4
+#define CLIENT_THREAD_CNT 3
 #define CLIENT_REM_THREAD_CNT 2
 #define CLIENT_SEND_THREAD_CNT 2
 #define CLIENT_RUNTIME false
@@ -124,7 +124,7 @@
 #define TS_ALLOC          TS_CLOCK
 #define TS_BATCH_ALLOC        false
 #define TS_BATCH_NUM        1
-// [MVCC]
+// [MVCC]g_this_total_thread_cnt
 // when read/write history is longer than HIS_RECYCLE_LEN
 // the history should be recycled.
 #define HIS_RECYCLE_LEN       10
@@ -351,7 +351,7 @@ enum PPSTxnType {PPS_ALL = 0,
 
 #define SEED 0
 #define SHMEM_ENV false
-#define ENVIRONMENT_EC2 true
+#define ENVIRONMENT_EC2 false
 
 #endif
 

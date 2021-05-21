@@ -45,7 +45,7 @@ void TxnTable::init() {
 
 void TxnTable::dump() {
   for(uint64_t i = 0; i < pool_size;i++) {
-    if(pool[i]->cnt  == 0)
+    if(pool[i]->cnt  == 0){
       continue;
       txn_node_t t_node = pool[i]->head;
 
@@ -54,6 +54,7 @@ void TxnTable::dump() {
             );
         t_node = t_node->next;
       }
+    }
       
   }
 }

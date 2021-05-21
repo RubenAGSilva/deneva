@@ -1,8 +1,8 @@
-CC=g++
+CC=g++ -g -Wall
 CFLAGS=-Wall -g -gdwarf-3 -std=c++0x 
 #CFLAGS += -fsanitize=address -fno-omit-frame-pointer 
 JEMALLOC=./jemalloc-4.0.3
-NNMSG=./nanomsg-0.5-beta
+NNMSG=./nanomsg-0.5-beta/.libs
 
 .SUFFIXES: .o .cpp .h
 
@@ -12,8 +12,8 @@ DEPS = -I. -I./benchmarks -I./client/ -I./concurrency_control -I./storage -I./tr
 CFLAGS += $(DEPS) -D NOGRAPHITE=1 -Werror -Wno-sizeof-pointer-memaccess
 LDFLAGS = -Wall -L. -L$(NNMSG) -L$(JEMALLOC)/lib -Wl,-rpath,$(JEMALLOC)/lib -pthread -gdwarf-3 -lrt -std=c++0x
 #LDFLAGS = -Wall -L. -L$(NNMSG) -L$(JEMALLOC)/lib -Wl,-rpath,$(JEMALLOC)/lib -pthread -gdwarf-3 -lrt -std=c++11
-LDFLAGS += $(CFLAGS)
-LIBS = -lnanomsg -lanl -ljemalloc 
+LDFLAGS += $(CFLAGS) --verbose
+LIBS = -lnanomsg -lanl -ljemalloc
 
 DB_MAINS = ./client/client_main.cpp ./system/sequencer_main.cpp ./unit_tests/unit_main.cpp
 CL_MAINS = ./system/main.cpp ./system/sequencer_main.cpp ./unit_tests/unit_main.cpp
@@ -112,3 +112,5 @@ runcl : $(OBJS_CL)
 .PHONY: clean
 clean:
 	rm -f obj/*.o obj/.depend rundb runcl runsq unit_test
+
+#g++ -o $@ $^ -Wall -L. -L./nanomsg-1.1.5/build -L./jemalloc-5.2.1/lib -Wl,-rpath,./jemalloc-5.2.1/lib -pthread -gdwarf-3 -lrt -std=c++0x -lnanomsg ./*.h ./*.cpp system/*.cpp transport/*.cpp benchmarks/*.cpp storage/*.cpp statistics/*.cpp concurrency_control/*.cpp client/*.cpp
