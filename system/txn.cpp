@@ -817,6 +817,19 @@ RC TxnManager::get_row(row_t * row, access_t type, row_t *& row_rtn) {
     }
 	access->type = type;
 	access->orig_row = row;
+
+  switch(type){ //Row_rtn = is the row that is returned! 
+    case RD :
+      framework.read(framework.getTransaction(txn->txn_id), row->get_primary_key()); //TODO
+      break;
+    case WR :
+      framework.write(framework.getTransaction(txn->txn_id), row->get_primary_key(), row->get_field_cnt()); //Colocar key e value apropriado. TODO
+      break;
+    default:
+      break;
+  }
+  
+
 #if ROLL_BACK && (CC_ALG == DL_DETECT || CC_ALG == NO_WAIT || CC_ALG == WAIT_DIE || CC_ALG == HSTORE || CC_ALG == HSTORE_SPEC)
 	if (type == WR) {
     //printf("alloc 10 %ld\n",get_txn_id());
@@ -849,7 +862,6 @@ RC TxnManager::get_row(row_t * row, access_t type, row_t *& row_rtn) {
 	timespan = get_sys_clock() - starttime;
 	INC_STATS(get_thd_id(), txn_manager_time, timespan);
 	row_rtn  = access->data;
-
 
   if(CC_ALG == HSTORE || CC_ALG == HSTORE_SPEC || CC_ALG == CALVIN)
     assert(rc == RCOK);
@@ -886,6 +898,16 @@ RC TxnManager::get_row_post_wait(row_t *& row_rtn) {
 	if (type == WR)
 		++txn->write_cnt;
 
+  switch(type){ //Row_rtn = is the row that is returned! 
+    case RD :
+      framework.read(framework.getTransaction(txn->txn_id), row->get_primary_key()); //TODO
+      break;
+    case WR :
+      framework.write(framework.getTransaction(txn->txn_id),row->get_primary_key(), row->get_field_cnt()); //Colocar key e value apropriado. TODO
+      break;
+    default:
+      break;
+  }
 
   txn->accesses.add(access);
 	uint64_t timespan = get_sys_clock() - starttime;
@@ -901,6 +923,7 @@ void TxnManager::insert_row(row_t * row, table_t * table) {
 		return;
 	assert(txn->insert_rows.size() < MAX_ROW_PER_TXN);
   txn->insert_rows.add(row);
+  framework.write(framework.getTransaction(txn->txn_id),row->get_primary_key(), row->get_field_cnt()); //Colocar value apropriado. TODO
 }
 
 itemid_t *

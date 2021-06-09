@@ -38,6 +38,7 @@
 #include "work_queue.h"
 #include "maat.h"
 #include "client_query.h"
+#include "../framework/framework.h"
 
 void network_test();
 void network_test_recv();
@@ -91,6 +92,11 @@ int main(int argc, char* argv[])
   simulation->init();
   printf("Done\n");
   fflush(stdout);
+  
+  printf("initializing transactional framework");
+  framework = Framework();
+  fflush(stdout);
+
 	Workload * m_wl;
 	switch (WORKLOAD) {
 		case YCSB :
@@ -161,6 +167,7 @@ int main(int argc, char* argv[])
   fflush(stdout);
   txn_table.init();
   printf("Done\n");
+
 #if CC_ALG == CALVIN
   printf("Initializing sequencer... ");
   fflush(stdout);

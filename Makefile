@@ -6,8 +6,8 @@ NNMSG=./nanomsg-0.5-beta/.libs
 
 .SUFFIXES: .o .cpp .h
 
-SRC_DIRS = ./ ./benchmarks/ ./client/ ./concurrency_control/ ./storage/ ./transport/ ./system/ ./statistics/#./unit_tests/
-DEPS = -I. -I./benchmarks -I./client/ -I./concurrency_control -I./storage -I./transport -I./system -I./statistics -I$(JEMALLOC)/include #-I./unit_tests 
+SRC_DIRS = ./ ./framework/utils/ ./framework/ ./benchmarks/ ./client/ ./concurrency_control/ ./storage/ ./transport/ ./system/ ./statistics/ #./unit_tests/
+DEPS = -I. -I./framework/utils -I./framework -I./benchmarks -I./client/ -I./concurrency_control -I./storage -I./transport -I./system -I./statistics -I$(JEMALLOC)/include #-I./unit_tests 
 
 CFLAGS += $(DEPS) -D NOGRAPHITE=1 -Werror -Wno-sizeof-pointer-memaccess
 LDFLAGS = -Wall -L. -L$(NNMSG) -L$(JEMALLOC)/lib -Wl,-rpath,$(JEMALLOC)/lib -pthread -gdwarf-3 -lrt -std=c++0x
@@ -52,6 +52,10 @@ unit_test :  $(OBJS_UNIT)
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
 ./obj/%.o: storage/%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
+./obj/%.o: framework/utils/%.cpp
+	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
+./obj/%.o: framework/%.cpp
+	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
 ./obj/%.o: system/%.cpp
 	$(CC) -c -DSTATS_ENABLE=false $(CFLAGS) $(INCLUDE) -o $@ $<
 ./obj/%.o: concurrency_control/%.cpp
@@ -60,6 +64,7 @@ unit_test :  $(OBJS_UNIT)
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
 ./obj/%.o: %.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
+	
 
 
 rundb : $(OBJS_DB)
@@ -73,6 +78,10 @@ rundb : $(OBJS_DB)
 ./obj/%.o: benchmarks/%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
 ./obj/%.o: storage/%.cpp
+	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
+./obj/%.o: framework/utils/%.cpp
+	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
+./obj/%.o: framework/%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
 ./obj/%.o: system/%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
@@ -97,6 +106,10 @@ runcl : $(OBJS_CL)
 ./obj/%.o: benchmarks/%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
 ./obj/%.o: storage/%.cpp
+	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
+./obj/%.o: framework/utils/%.cpp
+	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
+./obj/%.o: framework/%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
 ./obj/%.o: system/%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<

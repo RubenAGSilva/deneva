@@ -48,6 +48,7 @@
 #include "logger.h"
 #include "sim_manager.h"
 //#include "maat.h"
+#include "../framework/framework.h"
 
 using namespace std;
 
@@ -76,6 +77,7 @@ class Client_txn;
 class Sequencer;
 class Logger;
 class TimeTable;
+class Framework;
 
 typedef uint32_t UInt32;
 typedef int32_t SInt32;
@@ -111,6 +113,7 @@ extern Client_txn client_man;
 extern Sequencer seq_man;
 extern Logger logger;
 extern TimeTable time_table;
+extern Framework framework;
 
 extern bool volatile warmup_done;
 extern bool volatile enable_thread_mem_pool;
