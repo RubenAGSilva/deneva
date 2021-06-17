@@ -8,15 +8,17 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include "configuration.cpp"
 
 using namespace std;
 
 Framework::Framework(){
-    //config file of which modules init.
-    groupMembership = GroupMembership(Node(Role::TIMESTAMPER));
-    order = Order();
-    replication = Replication();
-    validation = Validation();
+    
+    groupMembership = configuration::initGroupModule();
+    order = configuration::initOrderModule();
+    replication = configuration::initReplicationModule();
+    validation = configuration::initValidationModule();
+
 }
 
 void Framework::beginTransaction(TransactionF transaction){
@@ -25,14 +27,14 @@ void Framework::beginTransaction(TransactionF transaction){
 
     mapOfTransactions.insert(std::pair<uint64_t,TransactionF>(transaction.getId(), transaction));
 
-    string nodeId = groupMembership.getNode().getId();
-    if(groupMembership.getRole() != Role::TIMESTAMPER){
-        nodeId = groupMembership.getTimestamper();
+    string nodeId = groupMembership->getNode().getId();
+    if(groupMembership->getRole() != Role::TIMESTAMPER){
+        nodeId = groupMembership->getTimestamper();
     }
 
     //assign the transaction to a coordinator.
-    order.timestampStartup(transaction, Metadata());
-    replication.replicate(transaction, Metadata());
+    order->timestampStartup(transaction, Metadata());
+    replication->replicate(transaction, Metadata());
 }
 
 void Framework::endTransaction(TransactionF transaction){
@@ -75,13 +77,13 @@ void Framework::commit(TransactionF transaction){
     printf("commit transaction %lu with %lu operations\n", transaction.getId(), transaction.getReadSet().size());
     fflush(stdout);
 
-    groupMembership.getCoordinator(transaction);
+    groupMembership->getCoordinator(transaction);
     
     if(!transaction.isValidated()){ //para sistemas que nao precisam de validacao, isValidated(){return true;}
-        if(validation.validate(transaction)){
-            order.timestampCommit(transaction, Metadata());
-            replication.replicate(transaction, Metadata());
-            replication.replicateResult(transaction, Metadata());
+        if(validation->validate(transaction)){
+            order->timestampCommit(transaction, Metadata());
+            replication->replicate(transaction, Metadata());
+            replication->replicateResult(transaction, Metadata());
             transaction.setFinished(true);
             //makeDurable(transaction);
         }
@@ -100,10 +102,10 @@ void Framework::abort(TransactionF transaction){
 }
 
 void Framework::validate(TransactionF transaction){ 
-    validation.validate(transaction);
+    validation->validate(transaction);
 }
 void Framework::replicate(TransactionF transaction){
-    replication.replicate(transaction, Metadata());
+    replication->replicate(transaction, Metadata());
 }
 TransactionF Framework::getTransaction(uint64_t id){
     return mapOfTransactions[id];
@@ -116,7 +118,6 @@ void Framework::makeDurable(TransactionF transaction){
         printf("YAY\n");
         fflush(stdout);
     }
-    
     listOfOperations=transaction.getWriteSet();
 
     for(list<Content>::iterator i = listOfOperations.begin(); i!= listOfOperations.end(); i++){

@@ -94,8 +94,10 @@ int main(int argc, char* argv[])
   fflush(stdout);
   
   printf("initializing transactional framework");
-  framework = Framework();
+  //framework = Framework();
   fflush(stdout);
+  Framework frame = Framework(); // meter como attributo possivelmente !
+  framework = &frame;
 
 	Workload * m_wl;
 	switch (WORKLOAD) {

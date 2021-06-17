@@ -820,10 +820,10 @@ RC TxnManager::get_row(row_t * row, access_t type, row_t *& row_rtn) {
 
   switch(type){ //Row_rtn = is the row that is returned! 
     case RD :
-      framework.read(framework.getTransaction(txn->txn_id), row->get_primary_key()); //TODO
+      framework->read(framework->getTransaction(txn->txn_id), row->get_primary_key()); //TODO
       break;
     case WR :
-      framework.write(framework.getTransaction(txn->txn_id), row->get_primary_key(), row->get_field_cnt()); //Colocar key e value apropriado. TODO
+      framework->write(framework->getTransaction(txn->txn_id), row->get_primary_key(), row->get_field_cnt()); //Colocar key e value apropriado. TODO
       break;
     default:
       break;
@@ -900,10 +900,10 @@ RC TxnManager::get_row_post_wait(row_t *& row_rtn) {
 
   switch(type){ //Row_rtn = is the row that is returned! 
     case RD :
-      framework.read(framework.getTransaction(txn->txn_id), row->get_primary_key()); //TODO
+      framework->read(framework->getTransaction(txn->txn_id), row->get_primary_key()); //TODO
       break;
     case WR :
-      framework.write(framework.getTransaction(txn->txn_id),row->get_primary_key(), row->get_field_cnt()); //Colocar key e value apropriado. TODO
+      framework->write(framework->getTransaction(txn->txn_id),row->get_primary_key(), row->get_field_cnt()); //Colocar key e value apropriado. TODO
       break;
     default:
       break;
@@ -923,7 +923,7 @@ void TxnManager::insert_row(row_t * row, table_t * table) {
 		return;
 	assert(txn->insert_rows.size() < MAX_ROW_PER_TXN);
   txn->insert_rows.add(row);
-  framework.write(framework.getTransaction(txn->txn_id),row->get_primary_key(), row->get_field_cnt()); //Colocar value apropriado. TODO
+  framework->write(framework->getTransaction(txn->txn_id),row->get_primary_key(), row->get_field_cnt()); //Colocar value apropriado. TODO
 }
 
 itemid_t *

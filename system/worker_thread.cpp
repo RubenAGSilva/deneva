@@ -43,7 +43,7 @@ void WorkerThread::setup() {
 }
 
 TransactionF getTransaction(Message * msg){
-  return framework.getTransaction(msg->get_txn_id());
+  return framework->getTransaction(msg->get_txn_id());
 }
 
 void WorkerThread::process(Message * msg) {
@@ -119,14 +119,14 @@ void WorkerThread::check_if_done(RC rc) {
     return;
   }
 
-  transaction = framework.getTransaction(txn_man->get_txn_id());
+  transaction = framework->getTransaction(txn_man->get_txn_id());
 
   if(rc == Commit){
-    framework.commit(transaction);
+    framework->commit(transaction);
     commit();
   }
   if(rc == Abort){
-    framework.abort(transaction);
+    framework->abort(transaction);
     abort();
   }
 }
@@ -145,8 +145,8 @@ void WorkerThread::calvin_wrapup() {
   } else {
     msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,CALVIN_ACK),txn_man->return_id);
   }
-  transaction = framework.getTransaction(txn_man->get_txn_id());
-  framework.endTransaction(transaction);
+  transaction = framework->getTransaction(txn_man->get_txn_id());
+  framework->endTransaction(transaction);
   release_txn_man();
 }
 
@@ -165,8 +165,8 @@ void WorkerThread::commit() {
 #if !SERVER_GENERATE_QUERIES
   msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,CL_RSP),txn_man->client_id);
 #endif
-  transaction = framework.getTransaction(txn_man->get_txn_id());
-  framework.endTransaction(transaction);
+  transaction = framework->getTransaction(txn_man->get_txn_id());
+  framework->endTransaction(transaction);
   // remove txn from pool
   release_txn_man();
   // Do not use txn_man after this
@@ -185,8 +185,8 @@ void WorkerThread::abort() {
 
   txn_man->txn_stats.total_abort_time += penalty;
 
-  transaction = framework.getTransaction(txn_man->get_txn_id());
-  framework.endTransaction(transaction);
+  transaction = framework->getTransaction(txn_man->get_txn_id());
+  framework->endTransaction(transaction);
 
 }
 
@@ -314,7 +314,7 @@ RC WorkerThread::process_rfin(Message * msg) {
   if(!((FinishMessage*)msg)->readonly || CC_ALG == MAAT || CC_ALG == OCC)
     msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,RACK_FIN),GET_NODE_ID(msg->get_txn_id()));
   transaction = getTransaction(msg);
-  framework.endTransaction(transaction);
+  framework->endTransaction(transaction);
   release_txn_man();
 
   return RCOK;
@@ -349,7 +349,7 @@ RC WorkerThread::process_rack_prep(Message * msg) {
   transaction = getTransaction(msg);
   if(txn_man->get_rc() == RCOK) {
     rc  = txn_man->validate();
-    framework.validate(transaction);
+    framework->validate(transaction);
   }
   if(rc == Abort || txn_man->get_rc() == Abort) {
     txn_man->txn->rc = Abort;
@@ -382,11 +382,11 @@ RC WorkerThread::process_rack_rfin(Message * msg) {
 
   if(txn_man->get_rc() == RCOK) {
     //txn_man->commit();
-    framework.commit(transaction);
+    framework->commit(transaction);
     commit();
   } else {
     //txn_man->abort();
-    framework.abort(transaction);
+    framework->abort(transaction);
     abort();
   }
   return rc;
@@ -468,7 +468,7 @@ RC WorkerThread::process_rprepare(Message * msg) {
     transaction = getTransaction(msg);
     // Validate transaction
     rc  = txn_man->validate();
-    framework.validate(transaction);
+    framework->validate(transaction);
     txn_man->set_rc(rc);
     msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,RACK_PREP),msg->return_node_id);
     // Clean up as soon as abort is possible
@@ -498,7 +498,7 @@ RC WorkerThread::process_rtxn(Message * msg) {
           msg->txn_id = txn_id;
 
           //FRAMEWORK:
-          framework.beginTransaction(TransactionF(txn_id));
+          framework->beginTransaction(TransactionF(txn_id));
           transaction = getTransaction(msg); //maybe unnecessary
 
 					// Put txn in txn_table
@@ -570,7 +570,7 @@ RC WorkerThread::process_log_msg_rsp(Message * msg) {
   txn_man->repl_finished = true;
   if(txn_man->log_flushed){
     transaction = getTransaction(msg);
-    framework.commit(transaction);
+    framework->commit(transaction);
     commit();
   }
   return RCOK;
@@ -586,7 +586,7 @@ RC WorkerThread::process_log_flushed(Message * msg) {
   txn_man->log_flushed = true;
   if(g_repl_cnt == 0 || txn_man->repl_finished){
     transaction = getTransaction(msg);
-    framework.commit(transaction);
+    framework->commit(transaction);
     commit();
   }
   return RCOK; 

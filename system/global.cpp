@@ -58,7 +58,7 @@ Client_txn client_man;
 Sequencer seq_man;
 Logger logger;
 TimeTable time_table;
-Framework framework;
+interfaceFramework* framework;
 
 bool volatile warmup_done = false;
 bool volatile enable_thread_mem_pool = false;
