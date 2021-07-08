@@ -94,7 +94,6 @@ int main(int argc, char* argv[])
   fflush(stdout);
   
   printf("initializing transactional framework");
-  //framework = Framework();
   fflush(stdout);
   Framework frame = Framework(); // meter como attributo possivelmente !
   framework = &frame;
@@ -111,6 +110,7 @@ int main(int argc, char* argv[])
 			assert(false);
 	}
 	m_wl->init();
+  
 	printf("Workload initialized!\n");
   fflush(stdout);
 #if NETWORK_TEST

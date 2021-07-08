@@ -1,6 +1,6 @@
 #include "transaction.h"
 #include "metadata.cpp"
-#include "content.cpp"
+#include "content.h"
 #include <list>
 #include <string>
 
@@ -12,17 +12,35 @@ TransactionF::TransactionF(uint64_t id1){
     id=id1;
 }
 
-void TransactionF::addToReadSet(int64_t key, int value){
-    readset.push_back(Content(key, value));
+void TransactionF::addToReadSet(Content* content){
+    readset.push_back(content);
     //printf("Added to read set %lu \n", readset.size());
     //fflush(stdout);
 }
 
-void TransactionF::addToWriteSet(int64_t key, int value){
-    writeset.push_back(Content(key, value));
+void TransactionF::addToWriteSet(Content* content){
+    writeset.push_back(content);
 }
 
-void TransactionF::addLockDetained(int lock){
+void TransactionF::addLockDetained(uint64_t lock){
     locksDetained.push_back(lock);
+}
+
+uint64_t TransactionF::incr_lr() {
+  //ATOM_ADD(this->rsp_cnt,i);
+  uint64_t result;
+  sem_wait(&rsp_mutex);
+  result = ++lock_ready_cnt;
+  sem_post(&rsp_mutex);
+  return result;
+}
+
+uint64_t TransactionF::decr_lr() {
+  //ATOM_SUB(this->rsp_cnt,i);
+  uint64_t result;
+  sem_wait(&rsp_mutex);
+  result = --this->lock_ready_cnt;
+  sem_post(&rsp_mutex);
+  return result;
 }
 

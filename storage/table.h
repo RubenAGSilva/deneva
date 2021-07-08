@@ -18,6 +18,7 @@
 #define _TABLE_H_
 
 #include "global.h"
+#include "../framework/framework.h"
 
 // TODO sequential scan is not supported yet.
 // only index access is supported for table. 

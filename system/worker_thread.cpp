@@ -42,7 +42,7 @@ void WorkerThread::setup() {
 
 }
 
-TransactionF getTransaction(Message * msg){
+TransactionF* getTransaction(Message * msg){
   return framework->getTransaction(msg->get_txn_id());
 }
 
@@ -498,7 +498,8 @@ RC WorkerThread::process_rtxn(Message * msg) {
           msg->txn_id = txn_id;
 
           //FRAMEWORK:
-          framework->beginTransaction(TransactionF(txn_id));
+          TransactionF* transactionF = new TransactionF(txn_id);
+          framework->beginTransaction(transactionF);
           transaction = getTransaction(msg); //maybe unnecessary
 
 					// Put txn in txn_table

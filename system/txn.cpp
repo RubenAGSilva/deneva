@@ -800,7 +800,21 @@ RC TxnManager::get_row(row_t * row, access_t type, row_t *& row_rtn) {
     this->last_row = row;
     this->last_type = type;
 
-    rc = row->get_row(type, this, access->data);
+    rc = row->get_row(type, this, access->data); // Concurrency Control - lock get etc.
+
+    TransactionF* transactionF;
+    switch(type){ //Row_rtn = is the row that is returned! HERE: Do Concurrency Control - eg. lock get, etc. (like they do on get_row)
+      case RD :
+        transactionF = framework->getTransaction(txn->txn_id);
+        framework->read(transactionF, row->get_primary_key()); //TODO
+        break;
+      case WR :
+        transactionF = framework->getTransaction(txn->txn_id);
+        framework->write(transactionF, row->get_primary_key(), row); //Colocar key e value apropriado. TODO
+        break;
+      default:
+        break;
+    }//TODO - o codigo seguinte de logging e rollback tem de ser colocado na framework ou no CC.cpp
 
     if (rc == Abort || rc == WAIT) {
         row_rtn = NULL;
@@ -817,17 +831,6 @@ RC TxnManager::get_row(row_t * row, access_t type, row_t *& row_rtn) {
     }
 	access->type = type;
 	access->orig_row = row;
-
-  switch(type){ //Row_rtn = is the row that is returned! 
-    case RD :
-      framework->read(framework->getTransaction(txn->txn_id), row->get_primary_key()); //TODO
-      break;
-    case WR :
-      framework->write(framework->getTransaction(txn->txn_id), row->get_primary_key(), row->get_field_cnt()); //Colocar key e value apropriado. TODO
-      break;
-    default:
-      break;
-  }
   
 
 #if ROLL_BACK && (CC_ALG == DL_DETECT || CC_ALG == NO_WAIT || CC_ALG == WAIT_DIE || CC_ALG == HSTORE || CC_ALG == HSTORE_SPEC)
@@ -898,12 +901,15 @@ RC TxnManager::get_row_post_wait(row_t *& row_rtn) {
 	if (type == WR)
 		++txn->write_cnt;
 
+  TransactionF* transactionF;
   switch(type){ //Row_rtn = is the row that is returned! 
     case RD :
-      framework->read(framework->getTransaction(txn->txn_id), row->get_primary_key()); //TODO
+      transactionF = framework->getTransaction(txn->txn_id);
+      framework->read(transactionF, row->get_primary_key()); //TODO
       break;
     case WR :
-      framework->write(framework->getTransaction(txn->txn_id),row->get_primary_key(), row->get_field_cnt()); //Colocar key e value apropriado. TODO
+      transactionF = framework->getTransaction(txn->txn_id);
+      framework->write(transactionF, row->get_primary_key(), row); //Colocar key e value apropriado. TODO
       break;
     default:
       break;
@@ -923,7 +929,8 @@ void TxnManager::insert_row(row_t * row, table_t * table) {
 		return;
 	assert(txn->insert_rows.size() < MAX_ROW_PER_TXN);
   txn->insert_rows.add(row);
-  framework->write(framework->getTransaction(txn->txn_id),row->get_primary_key(), row->get_field_cnt()); //Colocar value apropriado. TODO
+  TransactionF* transactionF = framework->getTransaction(txn->txn_id);
+  framework->write(transactionF, row->get_primary_key(), row); //Colocar value apropriado. TODO
 }
 
 itemid_t *

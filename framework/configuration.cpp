@@ -2,11 +2,14 @@
 #include "order.h"
 #include "validation.h"
 #include "replication.h"
+#include "utils/version.h"
+#include "utils/node.h"
+#include "utils/concurrency.h"
 
 namespace configuration{
     
-    static interfaceGroupMembership* initGroupModule(){
-        GroupMembership* g = new GroupMembership(Node(Role::TIMESTAMPER));
+    static interfaceGroupMembership* initGroupModule(Node* node){
+        GroupMembership* g = new GroupMembership(node);
         return g;
     }
 
@@ -20,8 +23,18 @@ namespace configuration{
         return v;
     }
     
-    static interfaceOrder* initOrderModule(){
-        Order* o = new Order();
+    static interfaceOrder* initOrderModule(Node* node, InterfaceVersion* clockVersion){
+        Order* o = new Order(node ,clockVersion);
         return o;
+    }
+
+    static InterfaceVersion* initClockVersion(){
+        ClockF* clock = new ClockF();
+        return clock;
+    }
+
+    static InterfaceConcurrencyControl* initConcurrencyControl(Content* content){
+        CC_Lock* concurrencyControl = new CC_Lock(content);
+        return concurrencyControl;
     }
 }

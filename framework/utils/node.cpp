@@ -7,8 +7,26 @@ using namespace std;
         Node::Node(Role role){
             role=role;
         }
+
+        Node::Node(int id1, Role role1, string host1, int httpPort1, int socketPort1, int adminPort1, list<int> partitions1){
+            id = id1;
+            role = role1;
+            host = host1;
+            httpPort = httpPort1;
+            socketPort = socketPort1;
+            adminPort = adminPort1;
+            partitions = partitions1;
+        }
+        Node::Node(int id1, Role role1, string host1, int httpPort1, int socketPort1, int adminPort1){
+            id = id1;
+            role = role1;
+            host = host1;
+            httpPort = httpPort1;
+            socketPort = socketPort1;
+            adminPort = adminPort1;
+        }
         
-        string Node::getId(){
+        int Node::getId(){
             return id;
         }
 

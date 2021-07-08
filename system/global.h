@@ -48,7 +48,7 @@
 #include "logger.h"
 #include "sim_manager.h"
 //#include "maat.h"
-#include "../framework/framework.h"
+//#include "../framework/framework.h"
 
 using namespace std;
 
@@ -78,6 +78,7 @@ class Sequencer;
 class Logger;
 class TimeTable;
 class interfaceFramework;
+class Framework;
 
 typedef uint32_t UInt32;
 typedef int32_t SInt32;

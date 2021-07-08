@@ -12,7 +12,7 @@ enum Role{
 
 class Node{
     private:
-        string id;
+        int id;
         int zoneId;
         string host;
         int httpPort;
@@ -23,9 +23,11 @@ class Node{
     public:
 
         Node(Role role);
+        Node(int id, Role role, string host, int httpPort, int socketPort, int adminPort, list<int> partitions);
+        Node(int id, Role role, string host, int httpPort, int socketPort, int adminPort);
         Node() = default;
         
-        string getId();
+        int getId();
 
         int getZoneId();
 

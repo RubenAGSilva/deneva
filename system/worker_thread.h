@@ -19,6 +19,7 @@
 
 #include "global.h"
 #include "../framework/utils/transaction.h"
+#include "../framework/framework.h"
 
 class Workload;
 class Message;
@@ -59,7 +60,7 @@ private:
     ts_t        _curr_ts;
     ts_t        get_next_ts();
     TxnManager * txn_man;
-    TransactionF transaction;
+    TransactionF* transaction;
 
 
 };

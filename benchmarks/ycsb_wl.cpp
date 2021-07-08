@@ -103,6 +103,7 @@ RC YCSBWorkload::init_table() {
 					value[i] = (char)rand() % (1<<8) ;
 				new_row->set_value(fid, value);
 			}
+			framework->initContent(new_row);
             itemid_t * m_item =
                 (itemid_t *) mem_allocator.alloc( sizeof(itemid_t));
 			assert(m_item != NULL);
@@ -185,6 +186,8 @@ void * YCSBWorkload::init_table_slice() {
 			new_row->set_value(fid, value,sizeof(value));
 		}
 #endif
+
+		framework->initContent(new_row); 
 
 		itemid_t * m_item =
 			(itemid_t *) mem_allocator.alloc( sizeof(itemid_t));
