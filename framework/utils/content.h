@@ -7,7 +7,6 @@
     class Content{
         private:
             uint64_t key;
-            //int* value;
             row_t* value;
 
         public:
@@ -26,11 +25,5 @@
             void setValue(row_t* value){
                 value=value;
             }
-            // int* getValue(){
-            //     return value;
-            // }
-            // void setValue(int value){
-            //     value=value;
-            // }
     };
 #endif

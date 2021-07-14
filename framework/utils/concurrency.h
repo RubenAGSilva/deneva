@@ -15,18 +15,24 @@ class InterfaceConcurrencyControl{
 
     public:
         virtual Content* read(TransactionF* transaction1) = 0;
-        virtual Content* write(TransactionF* transaction1) = 0;
-        virtual Content* getControl(TransactionF* transaction1, access_t operation) = 0;
+        virtual Content* write(TransactionF* transaction1, Content* content1) = 0;
+        virtual bool getControl(TransactionF* transaction1, access_t operation) = 0;
         virtual void releaseControl(TransactionF* transaction1) = 0;
-        virtual void validate(TransactionF* transaction1) = 0;
+        virtual bool validate(TransactionF* transaction1) = 0;
+        virtual void setContent(Content* content1) = 0;
+        virtual Content* getContent()=0;
 };
 
 struct CC_Entry{ // struct used by all CC algorithms - each CC might not use some of the attributes.
-    lock_t type;
+    lock_t type; //Lock
     ts_t   ts;
     TransactionF* transaction;
 	CC_Entry* next;
 	CC_Entry* prev;
+
+    // Content ** rows; //[MAX_WRITE_SET]; OCC
+    // UInt32 set_size; // OCC
+    // UInt64 tn; //OCC
 };
 
 class CC_Lock : public InterfaceConcurrencyControl{
@@ -35,7 +41,6 @@ class CC_Lock : public InterfaceConcurrencyControl{
         Content* content;
         pthread_mutex_t* latch;
         lock_t lockType;
-        TransactionF* transaction; // remove
 
         UInt32 owner_cnt;
         UInt32 waiter_cnt;
@@ -51,32 +56,42 @@ class CC_Lock : public InterfaceConcurrencyControl{
         Content* return_invalidContent();
 
     public:
-        CC_Lock(Content* content1);
+        CC_Lock(Content* c);
         Content* read(TransactionF* transaction1) override;
-        Content* write(TransactionF* transaction1) override;
-        Content* getControl(TransactionF* transaction1, access_t operation) override;
+        Content* write(TransactionF* transaction1, Content* content1) override;
+        bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
-        void validate(TransactionF* transaction1) override;
+        bool validate(TransactionF* transaction1) override;
+        void setContent(Content* content1) override;
         bool conflict_lock(lock_t l1, lock_t l2);
         lock_t getOperationLock(access_t operation);
 
-        Content* getContent(){return content;}
+        Content* getContent()override{return content;}
         pthread_mutex_t* getMutex(){return latch;}
         lock_t getLockType(){return lockType;}
-        TransactionF* getTransaction(){return transaction;}
 
 };
 
 class CC_O : public InterfaceConcurrencyControl{
     private:
- 	    pthread_mutex_t * 	_latch;
- 	    sem_t 	_semaphore;
+ 	    pthread_mutex_t * _latch;
+        sem_t _semaphore;
+        bool blatch;
+        ts_t wts; // the last update time
+
+        Content* content;
+
+        
+
     public:
+        CC_O(Content* content1);
         Content* read(TransactionF* transaction1) override;
-        Content* write(TransactionF* transaction1) override;
-        Content* getControl(TransactionF* transaction1, access_t operation) override;
+        Content* write(TransactionF* transaction1, Content* content1) override;
+        bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
-        void validate(TransactionF* transaction1) override;
+        bool validate(TransactionF* transaction1) override;
+        void setContent(Content* content1) override;
+        Content* getContent()override{return content;}
 };
 class CC_TS : public InterfaceConcurrencyControl{
     private:
@@ -84,10 +99,11 @@ class CC_TS : public InterfaceConcurrencyControl{
 
     public:
         Content* read(TransactionF* transaction1) override;
-        Content* write(TransactionF* transaction1) override;
-        Content* getControl(TransactionF* transaction1, access_t operation) override;
+        Content* write(TransactionF* transaction1, Content* content1) override;
+        bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
-        void validate(TransactionF* transaction1) override;
+        bool validate(TransactionF* transaction1) override;
+        void setContent(Content* content1) override;
 };
 class CC_MVCC : public InterfaceConcurrencyControl{
     private:
@@ -95,10 +111,11 @@ class CC_MVCC : public InterfaceConcurrencyControl{
 
     public:
         Content* read(TransactionF* transaction1) override;
-        Content* write(TransactionF* transaction1) override;
-        Content* getControl(TransactionF* transaction1, access_t operation) override;
+        Content* write(TransactionF* transaction1, Content* content1) override;
+        bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
-        void validate(TransactionF* transaction1) override;
+        bool validate(TransactionF* transaction1) override;
+        void setContent(Content* content1) override;
 };
 class CC_MAAT : public InterfaceConcurrencyControl{
     private:
@@ -106,10 +123,12 @@ class CC_MAAT : public InterfaceConcurrencyControl{
 
     public:
         Content* read(TransactionF* transaction1) override;
-        Content* write(TransactionF* transaction1) override;
-        Content* getControl(TransactionF* transaction1, access_t operation) override;
+        Content* write(TransactionF* transaction1, Content* content1) override;
+        bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
-        void validate(TransactionF* transaction1) override;
+        bool validate(TransactionF* transaction1) override;
+        void setContent(Content* content1) override;
+        
 };
 
 #endif

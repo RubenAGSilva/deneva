@@ -44,3 +44,10 @@ uint64_t TransactionF::decr_lr() {
   return result;
 }
 
+static bool deleteAll(Content* elem){delete elem; return true;}
+
+void TransactionF::clearSets(){
+  readset.remove_if(deleteAll);
+  writeset.remove_if(deleteAll);
+}
+

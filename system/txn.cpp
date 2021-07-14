@@ -803,14 +803,14 @@ RC TxnManager::get_row(row_t * row, access_t type, row_t *& row_rtn) {
     rc = row->get_row(type, this, access->data); // Concurrency Control - lock get etc.
 
     TransactionF* transactionF;
-    switch(type){ //Row_rtn = is the row that is returned! HERE: Do Concurrency Control - eg. lock get, etc. (like they do on get_row)
+    switch(type){
       case RD :
         transactionF = framework->getTransaction(txn->txn_id);
-        framework->read(transactionF, row->get_primary_key()); //TODO
+        framework->read(transactionF, row->get_primary_key());
         break;
       case WR :
         transactionF = framework->getTransaction(txn->txn_id);
-        framework->write(transactionF, row->get_primary_key(), row); //Colocar key e value apropriado. TODO
+        framework->write(transactionF, row->get_primary_key(), row);
         break;
       default:
         break;

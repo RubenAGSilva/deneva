@@ -17,6 +17,8 @@
             uint64_t timestampStartup;
             uint64_t timestampCommit;
 
+            //uint64_t row_cnt;
+
             std::list<uint64_t> locksDetained;
             Metadata metadata;
 
@@ -47,6 +49,7 @@
             }
             void setTimestampCommit(uint64_t ts){timestampCommit = ts;}
             void setTimestampStart(uint64_t ts){timestampStartup = ts;}
+            //int getAcessCount(){return writeset.size()+readset.size();}
 
             uint64_t getId(){
                 return id;
@@ -90,6 +93,7 @@
             void clearLocksDetained(){
                 locksDetained.clear();
             }
+            void clearSets();
 
 };
 #endif

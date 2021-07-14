@@ -17,7 +17,7 @@ void Order::timestampStartup(TransactionF* transaction, Metadata metadata){
      fflush(stdout);
 
      clock->updateClock();
-     transaction->setTimestampStart(clock->getTime());
+     (*transaction).setTimestampStart((*clock).getTime()); //TODO
 }
 void Order::timestampCommit(TransactionF* transaction, Metadata metadata){
      printf("timestamp transaction commit %lu \n", transaction->getId());

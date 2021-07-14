@@ -4,8 +4,8 @@
 #include "content.h"
 #include "transaction.h"
 
-CC_Lock::CC_Lock(Content* content1){
-    content = content1;
+CC_Lock::CC_Lock(Content* c){
+    content = c;
     owners_size = 1;//1031;
     owners = NULL;
     owners = (CC_Entry**) mem_allocator.alloc(sizeof(CC_Entry*)*owners_size);
@@ -23,31 +23,34 @@ CC_Lock::CC_Lock(Content* content1){
 }
 
 Content* CC_Lock::read(TransactionF* transaction){
-    Content* returnContent = getControl(transaction, RD);
-    //releaseControl(transaction); if read uncommitted or committed
-    if(returnContent->getValue()!= NULL){
-            transaction->addToReadSet(returnContent); 
-            transaction->addLockDetained(returnContent->getKey()); // check if we dont want to do this (Read Uncommitted, Read Committed)
-        }
-    return returnContent;
+    if(getControl(transaction, RD)){
+        transaction->addToReadSet(content); 
+        printf("---- id: %lu | transaction: %lu \n", content->getKey(), transaction->getId());
+        transaction->addLockDetained(content->getKey()); 
+        fflush(stdout);
+        return content;
+    }
+    return return_invalidContent();
 }
 
-Content* CC_Lock::write(TransactionF* transaction){
-   Content* returnContent = getControl(transaction, WR);
-   //releaseControl(transaction); if read uncommitted or committed
-   if(returnContent->getValue()!= NULL){
-            transaction->addToWriteSet(returnContent); 
-            transaction->addLockDetained(returnContent->getKey()); // check if we dont want to do this (Read Uncommitted, Read Committed)
-        }
-   return returnContent;
+Content* CC_Lock::write(TransactionF* transaction, Content* content1){
+   if(getControl(transaction, WR)){
+        transaction->addToWriteSet(content1); 
+        transaction->addLockDetained(content1->getKey()); 
+        return content1; //newly content
+   }
+    return return_invalidContent();
+   
 }
 
-void CC_Lock::validate(TransactionF* transaction){
-    return;
+bool CC_Lock::validate(TransactionF* transaction){
+    return true;
 }
 
-Content* CC_Lock::getControl(TransactionF* transaction, access_t operation){ 
-    Content* returnContent = NULL;
+bool CC_Lock::getControl(TransactionF* transaction, access_t operation){ 
+    //Content* returnContent = NULL;
+    bool success = false;
+
     if (g_central_man) {
         //Coordinator to manage the locks
     }else{
@@ -71,7 +74,8 @@ Content* CC_Lock::getControl(TransactionF* transaction, access_t operation){
         // Cannot be added to the owner list.
         if (CC_ALG == NO_WAIT) {
             //abort
-            returnContent = return_invalidContent();
+            //returnContent = return_invalidContent();
+            success = false;
             goto final;
 
         } else if (CC_ALG == WAIT_DIE) {
@@ -127,11 +131,13 @@ Content* CC_Lock::getControl(TransactionF* transaction, access_t operation){
 
                 waiter_cnt++;
                 //rc = WAIT; wait TODO
-                returnContent = return_invalidContent();
+                //returnContent = return_invalidContent();
+                success = false;
             } else {
               //rc = Abort;
               //Abort TODO
-              returnContent = return_invalidContent();
+              //returnContent = return_invalidContent();
+              success = false;
             }
         } else if (CC_ALG == CALVIN){
             CC_Entry * entry = get_entry();
@@ -151,7 +157,8 @@ Content* CC_Lock::getControl(TransactionF* transaction, access_t operation){
             //rc = WAIT;
             //WAIT TODO
             
-            returnContent = return_invalidContent();
+            //returnContent = return_invalidContent();
+            success = false;
         }
     }else{
 
@@ -176,7 +183,8 @@ Content* CC_Lock::getControl(TransactionF* transaction, access_t operation){
           //own_starttime = get_sys_clock();
         }
         lockType = type;
-        returnContent = content;
+        //returnContent = content;
+        success = true;
     }
 final:
     if (g_central_man){
@@ -187,10 +195,11 @@ final:
     }
 
 	//return rc;
-    if(returnContent!= NULL && returnContent->getValue()!= NULL){
-        return content;
-    }
-    return returnContent;
+    // if(returnContent!= NULL && returnContent->getValue()!= NULL){
+    //     return content;
+    // }
+    return success;
+    //return returnContent;
 
 }
 
@@ -329,4 +338,9 @@ void CC_Lock::return_entry(CC_Entry * entry) {
 
 Content* CC_Lock::return_invalidContent(){
     return new Content(-1, NULL);
+}
+
+void CC_Lock::setContent(Content* content1){
+    delete content; //unable to rollback?
+    content = content1;
 }

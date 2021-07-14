@@ -1,10 +1,10 @@
 #include "group_membership.h"
 #include "order.h"
-#include "validation.h"
 #include "replication.h"
 #include "utils/version.h"
 #include "utils/node.h"
 #include "utils/concurrency.h"
+#include "concurrency_controller.h"
 
 namespace configuration{
     
@@ -18,11 +18,6 @@ namespace configuration{
         return r;
     }
     
-    static interfaceValidation* initValidationModule(){
-        Validation* v = new Validation();
-        return v;
-    }
-    
     static interfaceOrder* initOrderModule(Node* node, InterfaceVersion* clockVersion){
         Order* o = new Order(node ,clockVersion);
         return o;
@@ -33,8 +28,14 @@ namespace configuration{
         return clock;
     }
 
-    static InterfaceConcurrencyControl* initConcurrencyControl(Content* content){
-        CC_Lock* concurrencyControl = new CC_Lock(content);
+    static InterfaceConcurrencyControl* initConcurrencyControl(Content* c){
+        //switch case - CCAlgorithm, case locking: ; case otimistic; case multiversion etc...
+        CC_Lock* concurrencyControl = new CC_Lock(c);
         return concurrencyControl;
+    }
+
+    static InterfaceConcurrencyController* initConcurrencyController(){
+        ConcurrencyControllerLocks* concurrencyController = new ConcurrencyControllerLocks();
+        return concurrencyController;
     }
 }
