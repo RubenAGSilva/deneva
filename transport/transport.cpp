@@ -160,6 +160,7 @@ Socket * Transport::connect(uint64_t dest_id,uint64_t port_id) {
 #endif
 #endif
   printf("Sock Connecting to %s %d -> %ld\n",socket_name,g_node_id,dest_id);
+  
   int rc = socket->sock.connect(socket_name);
   if(rc < 0) {
     printf("Connect Error: %d %s\n",errno,strerror(errno));

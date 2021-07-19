@@ -6,12 +6,14 @@
 
 using namespace std;
 
-void Replication::replicate(TransactionF* transaction, Metadata metadata, list<Node>* nodes){
+void Replication::replicate(TransactionF* transaction, Metadata metadata, list<Node*> nodes){
+
+    for(Node* node : nodes){
+        if(node->getId() != transaction->getNodeId()){
+            node->addTransaction(transaction); //overwrite of the transaction 
+        }
+    }
     printf("replicate transaction %lu\n", transaction->getId());
-    fflush(stdout);
-}
-void Replication::replicateResult(TransactionF* transaction, Metadata result, list<Node>* nodes){
-    printf("replicate transaction result %lu\n", transaction->getId());
     fflush(stdout);
 }
         

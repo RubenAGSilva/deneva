@@ -24,7 +24,6 @@ class ConcurrencyControllerLocks : public InterfaceConcurrencyController{
         map<uint64_t, InterfaceConcurrencyControl*> concurrencyControlMap;
 
         void releaseLocks(TransactionF* transaction);
-        void makeDurable(TransactionF* transaction);
     public:
 
         void initContent(uint64_t key, row_t* row) override;
@@ -61,7 +60,6 @@ class ConcurrencyControllerOtimistic : public InterfaceConcurrencyController{
         volatile bool lock_all;
 	    uint64_t lock_txn_id;
 
-        void makeDurable(TransactionF* transaction);
         bool per_row_validate(TransactionF * transaction); // per row validation similar to Hekaton.
         bool central_validate(TransactionF * transaction); // parallel validation in the original OCC paper.
         void per_row_finish(TransactionF * transaction);

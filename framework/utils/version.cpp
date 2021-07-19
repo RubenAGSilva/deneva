@@ -39,9 +39,9 @@ void ClockF::updateClock(){
 
 	switch(g_ts_alloc) {
 	case TS_MUTEX :
-		//pthread_mutex_lock( &time );
+		pthread_mutex_lock( &ts_mutex );
 		time++;
-		//pthread_mutex_unlock( &time );
+		pthread_mutex_unlock( &ts_mutex );
 		break;
 	case TS_CAS :
 		if (g_ts_batch_alloc)
@@ -63,4 +63,19 @@ void ClockF::updateClock(){
     clock_gettime(CLOCK_REALTIME, tp);
     time = tp->tv_sec * 1000000000 + tp->tv_nsec; 
     delete tp;
+}
+
+void ClockF::lockContent(Content * row) {
+	int bid = hash(row);
+	pthread_mutex_lock( &mutexes[bid] );	
+}
+
+void ClockF::releaseContent(Content * row) {
+	int bid = hash(row);
+	pthread_mutex_unlock( &mutexes[bid] );
+}
+
+uint64_t ClockF::hash(Content * row) {
+	uint64_t addr = (uint64_t)row / MEM_ALLIGN;
+    return (addr * 1103515247 + 12345) % BUCKET_CNT;
 }

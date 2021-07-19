@@ -32,8 +32,8 @@ class interfaceFramework{
         virtual void abort(TransactionF* transaction) = 0;
         virtual bool validate(TransactionF* transaction) = 0;
         virtual void replicate(TransactionF* transaction) = 0;
-        virtual std::map<uint64_t,TransactionF*> getMapOfTransactions() = 0;
         virtual TransactionF* getTransaction(uint64_t id) = 0;
+        virtual TransactionF* getTransaction(uint64_t transactionId, uint64_t nodeId) = 0;
         virtual void initContent(row_t* row) = 0;
 };
 
@@ -42,12 +42,10 @@ class Framework : public interfaceFramework{
 
     private:
         interfaceGroupMembership* groupMembership;
-        interfaceOrder* order;
+        //interfaceOrder* order;
         interfaceReplication* replication;
         InterfaceConcurrencyController* concurrencyController;
-        map<uint64_t,TransactionF*> mapOfTransactions;
 
-        //map<uint64_t, InterfaceConcurrencyControl*> concurrencyControlMap;
 
     public:
         Framework();
@@ -59,8 +57,8 @@ class Framework : public interfaceFramework{
         void abort(TransactionF* transaction) override;
         bool validate(TransactionF* transaction) override;
         void replicate(TransactionF* transaction) override;
-        map<uint64_t,TransactionF*> getMapOfTransactions() override {return mapOfTransactions;}
         TransactionF* getTransaction(uint64_t id) override;
+        TransactionF* getTransaction(uint64_t transactionId, uint64_t nodeId) override;
         void initContent(row_t* row) override;
 
 };

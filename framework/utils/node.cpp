@@ -8,7 +8,7 @@ using namespace std;
             role=role;
         }
 
-        Node::Node(int id1, Role role1, string host1, int httpPort1, int socketPort1, int adminPort1, list<int> partitions1){
+        Node::Node(uint64_t id1, Role role1, string host1, int httpPort1, int socketPort1, int adminPort1, list<int> partitions1){
             id = id1;
             role = role1;
             host = host1;
@@ -17,7 +17,7 @@ using namespace std;
             adminPort = adminPort1;
             partitions = partitions1;
         }
-        Node::Node(int id1, Role role1, string host1, int httpPort1, int socketPort1, int adminPort1){
+        Node::Node(uint64_t id1, Role role1, string host1, int httpPort1, int socketPort1, int adminPort1){
             id = id1;
             role = role1;
             host = host1;
@@ -26,7 +26,7 @@ using namespace std;
             adminPort = adminPort1;
         }
         
-        int Node::getId(){
+        uint64_t Node::getId(){
             return id;
         }
 
@@ -55,4 +55,15 @@ using namespace std;
         }
         list<int> Node::getPartitionsIds(){
             return partitions;
+        }
+        void Node::addTransaction(TransactionF* transaction){
+            try{
+                mapOfTransactions.erase(transaction->getId());
+                mapOfTransactions.insert(std::pair<uint64_t,TransactionF*>(transaction->getId(), transaction));
+            }catch(std::out_of_range){
+                mapOfTransactions.insert(std::pair<uint64_t,TransactionF*>(transaction->getId(), transaction));
+            }
+        }
+        TransactionF* Node::getTransaction(uint64_t transactionId){
+            return mapOfTransactions.at(transactionId);
         }

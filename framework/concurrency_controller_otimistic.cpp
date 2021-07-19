@@ -27,16 +27,25 @@ void ConcurrencyControllerOtimistic::write(TransactionF* transaction, uint64_t k
 
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
     Content* content = new Content(key, row);
-    concurrencyControl->write(transaction, content);
+    Content* returnContent = concurrencyControl->write(transaction, content);
+
+	printf("write %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
+    fflush(stdout);
 }
 
 void ConcurrencyControllerOtimistic::read(TransactionF* transaction, uint64_t key) {
 	
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
-    concurrencyControl->read(transaction);
+    Content* returnContent = concurrencyControl->read(transaction);
+
+	printf("read %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
+    fflush(stdout);
 }
 
 bool ConcurrencyControllerOtimistic::validate(TransactionF* transaction) {
+	if(transaction->isValidated()) //change TODO - aborted txns are validated twice
+		return true;
+	
 #if PER_ROW_VALID
 	if(per_row_validate(transaction)){
 		printf("validate transaction %lu \n", transaction->getId());
@@ -54,11 +63,19 @@ bool ConcurrencyControllerOtimistic::validate(TransactionF* transaction) {
 }
 
 void ConcurrencyControllerOtimistic::commit(TransactionF* transaction) {
-	makeDurable(transaction);
+	list<Content*> listOfOperations=transaction->getWriteSet();
+
+    for(Content* c : listOfOperations){
+        concurrencyControlMap.at(c->getKey())->commitWrites(); //make durable the writes
+    }
 }
 
 void ConcurrencyControllerOtimistic::abort(TransactionF* transaction) {
+	list<Content*> listOfOperations=transaction->getWriteSet();
 
+    for(Content* c : listOfOperations){
+        concurrencyControlMap.at(c->getKey())->abortWrites(); //abort the writes
+    }
 }
 
 void ConcurrencyControllerOtimistic::finish(TransactionF* transaction) {
@@ -127,6 +144,7 @@ bool ConcurrencyControllerOtimistic::central_validate(TransactionF * transaction
   sem_wait(&_semaphore);
 	//finish_tn = tnc;
   assert(!g_ts_batch_alloc);
+	order->timestampCommit(transaction, Metadata());
 	finish_tn = transaction->getTimestampCommit();
 	ent = active;
 	f_active_len = active_len;
@@ -295,11 +313,4 @@ bool ConcurrencyControllerOtimistic::test_valid(set_ent * set1, set_ent * set2) 
 			}
 		}
 	return true;
-}
-void ConcurrencyControllerOtimistic::makeDurable(TransactionF* transaction){
-    list<Content*> listOfOperations=transaction->getWriteSet();
-
-    for(Content* c : listOfOperations){
-        concurrencyControlMap.at(c->getKey())->setContent(c); //make durable the writes
-    }
 }

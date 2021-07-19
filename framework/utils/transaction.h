@@ -18,6 +18,7 @@
             uint64_t timestampCommit;
 
             //uint64_t row_cnt;
+            uint64_t nodeId;
 
             std::list<uint64_t> locksDetained;
             Metadata metadata;
@@ -34,7 +35,7 @@
             uint32_t lock_ready_cnt;
             sem_t rsp_mutex;
 
-            TransactionF(uint64_t id = -1);
+            TransactionF(uint64_t id = -1, uint64_t newNodeId = -1);
             void addToReadSet(Content* content);
             void addToWriteSet(Content* content);
             void addLockDetained(uint64_t lock);
@@ -72,6 +73,10 @@
             std::list<uint64_t> getLocksDetained(){
                 return locksDetained;
             }
+
+            uint64_t getNodeId(){return nodeId;}
+            void setNodeId(uint64_t newNodeId){nodeId = newNodeId;}
+
             bool isReplicated(){
                 return replicated;
             }

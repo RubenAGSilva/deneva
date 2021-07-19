@@ -18,9 +18,23 @@ obj/concurrencyOCC.o: framework/utils/concurrencyOCC.cpp \
  framework/utils/../../system/logger.h \
  framework/utils/../../system/sim_manager.h framework/utils/content.h \
  storage/row.h system/global.h framework/utils/transaction.h \
- framework/utils/metadata.cpp system/mem_alloc.h system/global.h
+ framework/utils/metadata.cpp framework/order.h \
+ framework/utils/transaction.h framework/utils/metadata.cpp \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h \
+ framework/utils/../../transport/nn.hpp system/query.h system/global.h \
+ system/helper.h system/array.h system/mem_alloc.h \
+ framework/utils/version.h framework/utils/content.h system/mem_alloc.h
 obj/metadata.o: framework/utils/metadata.cpp
-obj/node.o: framework/utils/node.cpp framework/utils/node.h
+obj/node.o: framework/utils/node.cpp framework/utils/node.h \
+ framework/utils/transaction.h framework/utils/metadata.cpp \
+ framework/utils/content.h storage/row.h system/global.h config.h \
+ statistics/stats.h statistics/stats_array.h system/pool.h \
+ system/global.h system/helper.h system/concurrentqueue.h \
+ system/txn_table.h system/logger.h system/sim_manager.h \
+ framework/utils/../../transport/transport.h \
+ framework/utils/../../transport/nn.hpp system/query.h system/array.h \
+ system/mem_alloc.h
 obj/concurrencyLocks.o: framework/utils/concurrencyLocks.cpp \
  framework/utils/concurrency.h framework/utils/../../system/global.h \
  config.h statistics/stats.h statistics/stats_array.h \
@@ -32,34 +46,45 @@ obj/concurrencyLocks.o: framework/utils/concurrencyLocks.cpp \
  framework/utils/../../system/logger.h \
  framework/utils/../../system/sim_manager.h framework/utils/content.h \
  storage/row.h system/global.h framework/utils/transaction.h \
- framework/utils/metadata.cpp system/mem_alloc.h system/global.h
+ framework/utils/metadata.cpp framework/order.h \
+ framework/utils/transaction.h framework/utils/metadata.cpp \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h \
+ framework/utils/../../transport/nn.hpp system/query.h system/global.h \
+ system/helper.h system/array.h system/mem_alloc.h \
+ framework/utils/version.h framework/utils/content.h system/mem_alloc.h
 obj/version.o: framework/utils/version.cpp framework/utils/version.h \
- framework/utils/../../system/global.h config.h statistics/stats.h \
- statistics/stats_array.h framework/utils/../../system/pool.h \
- framework/utils/../../system/global.h \
- framework/utils/../../system/helper.h \
- framework/utils/../../system/concurrentqueue.h \
- framework/utils/../../system/txn_table.h \
- framework/utils/../../system/logger.h \
- framework/utils/../../system/sim_manager.h
+ framework/utils/content.h storage/row.h system/global.h config.h \
+ statistics/stats.h statistics/stats_array.h system/pool.h \
+ system/global.h system/helper.h system/concurrentqueue.h \
+ system/txn_table.h system/logger.h system/sim_manager.h \
+ framework/utils/../../system/global.h
 obj/replication.o: framework/replication.cpp framework/replication.h \
  framework/utils/transaction.h framework/utils/metadata.cpp \
  framework/utils/content.h storage/row.h system/global.h config.h \
  statistics/stats.h statistics/stats_array.h system/pool.h \
  system/global.h system/helper.h system/concurrentqueue.h \
  system/txn_table.h system/logger.h system/sim_manager.h \
- framework/utils/metadata.cpp framework/utils/node.h
+ framework/utils/metadata.cpp framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h \
+ framework/utils/../../transport/nn.hpp system/query.h system/array.h \
+ system/mem_alloc.h
 obj/configuration.o: framework/configuration.cpp framework/group_membership.h \
  framework/utils/transaction.h framework/utils/metadata.cpp \
  framework/utils/content.h storage/row.h system/global.h config.h \
  statistics/stats.h statistics/stats_array.h system/pool.h \
  system/global.h system/helper.h system/concurrentqueue.h \
  system/txn_table.h system/logger.h system/sim_manager.h \
- framework/utils/node.h framework/order.h framework/utils/metadata.cpp \
- framework/utils/node.h framework/utils/version.h framework/replication.h \
+ transport/transport.h transport/nn.hpp system/query.h system/array.h \
+ system/mem_alloc.h system/mem_alloc.h framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h framework/order.h \
+ framework/utils/metadata.cpp framework/utils/node.h \
+ framework/utils/version.h framework/replication.h \
  framework/utils/concurrency.h framework/utils/../../system/global.h \
- framework/utils/transaction.h framework/concurrency_controller.h \
- system/mem_alloc.h
+ framework/utils/transaction.h framework/order.h \
+ framework/concurrency_controller.h
 obj/concurrency_controller_locks.o: \
  framework/concurrency_controller_locks.cpp \
  framework/concurrency_controller.h framework/utils/transaction.h \
@@ -68,17 +93,27 @@ obj/concurrency_controller_locks.o: \
  system/pool.h system/global.h system/helper.h system/concurrentqueue.h \
  system/txn_table.h system/logger.h system/sim_manager.h \
  framework/utils/concurrency.h framework/utils/../../system/global.h \
- framework/utils/transaction.h system/mem_alloc.h \
- framework/configuration.cpp framework/group_membership.h \
- framework/utils/node.h framework/order.h framework/utils/metadata.cpp \
- framework/utils/node.h framework/utils/version.h framework/replication.h
+ framework/utils/transaction.h framework/order.h \
+ framework/utils/transaction.h framework/utils/metadata.cpp \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h \
+ framework/utils/../../transport/nn.hpp system/query.h system/array.h \
+ system/mem_alloc.h framework/utils/version.h framework/utils/content.h \
+ system/mem_alloc.h framework/configuration.cpp \
+ framework/group_membership.h transport/transport.h \
+ framework/utils/node.h framework/order.h framework/replication.h \
+ framework/utils/metadata.cpp framework/utils/node.h \
+ framework/utils/version.h
 obj/group_membership.o: framework/group_membership.cpp \
  framework/group_membership.h framework/utils/transaction.h \
  framework/utils/metadata.cpp framework/utils/content.h storage/row.h \
  system/global.h config.h statistics/stats.h statistics/stats_array.h \
  system/pool.h system/global.h system/helper.h system/concurrentqueue.h \
  system/txn_table.h system/logger.h system/sim_manager.h \
- framework/utils/node.h framework/../system/global.h
+ transport/transport.h transport/nn.hpp system/query.h system/array.h \
+ system/mem_alloc.h system/mem_alloc.h framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h framework/../system/global.h
 obj/concurrency_controller_otimistic.o: \
  framework/concurrency_controller_otimistic.cpp \
  framework/concurrency_controller.h framework/utils/transaction.h \
@@ -87,10 +122,17 @@ obj/concurrency_controller_otimistic.o: \
  system/pool.h system/global.h system/helper.h system/concurrentqueue.h \
  system/txn_table.h system/logger.h system/sim_manager.h \
  framework/utils/concurrency.h framework/utils/../../system/global.h \
- framework/utils/transaction.h system/mem_alloc.h \
- framework/configuration.cpp framework/group_membership.h \
- framework/utils/node.h framework/order.h framework/utils/metadata.cpp \
- framework/utils/node.h framework/utils/version.h framework/replication.h
+ framework/utils/transaction.h framework/order.h \
+ framework/utils/transaction.h framework/utils/metadata.cpp \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h \
+ framework/utils/../../transport/nn.hpp system/query.h system/array.h \
+ system/mem_alloc.h framework/utils/version.h framework/utils/content.h \
+ system/mem_alloc.h framework/configuration.cpp \
+ framework/group_membership.h transport/transport.h \
+ framework/utils/node.h framework/order.h framework/replication.h \
+ framework/utils/metadata.cpp framework/utils/node.h \
+ framework/utils/version.h
 obj/order.o: framework/order.cpp framework/order.h \
  framework/utils/transaction.h framework/utils/metadata.cpp \
  framework/utils/content.h storage/row.h system/global.h config.h \
@@ -98,7 +140,10 @@ obj/order.o: framework/order.cpp framework/order.h \
  system/global.h system/helper.h system/concurrentqueue.h \
  system/txn_table.h system/logger.h system/sim_manager.h \
  framework/utils/metadata.cpp framework/utils/node.h \
- framework/utils/version.h
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h \
+ framework/utils/../../transport/nn.hpp system/query.h system/array.h \
+ system/mem_alloc.h framework/utils/version.h
 obj/framework.o: framework/framework.cpp framework/framework.h \
  framework/utils/content.h storage/row.h system/global.h config.h \
  statistics/stats.h statistics/stats_array.h system/pool.h \
@@ -106,11 +151,15 @@ obj/framework.o: framework/framework.cpp framework/framework.h \
  system/txn_table.h system/logger.h system/sim_manager.h \
  framework/group_membership.h framework/utils/transaction.h \
  framework/utils/metadata.cpp framework/utils/content.h \
- framework/utils/node.h framework/order.h framework/utils/metadata.cpp \
- framework/utils/node.h framework/utils/version.h framework/replication.h \
+ transport/transport.h transport/nn.hpp system/query.h system/array.h \
+ system/mem_alloc.h system/mem_alloc.h framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h framework/order.h \
+ framework/utils/metadata.cpp framework/utils/node.h \
+ framework/utils/version.h framework/replication.h \
  framework/utils/concurrency.h framework/utils/../../system/global.h \
- framework/utils/transaction.h framework/../storage/row.h \
- framework/concurrency_controller.h system/mem_alloc.h \
+ framework/utils/transaction.h framework/order.h \
+ framework/../storage/row.h framework/concurrency_controller.h \
  framework/configuration.cpp
 obj/ycsb_query.o: benchmarks/ycsb_query.cpp system/query.h system/global.h \
  config.h statistics/stats.h statistics/stats_array.h system/pool.h \
@@ -123,13 +172,15 @@ obj/ycsb_query.o: benchmarks/ycsb_query.cpp system/query.h system/global.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h transport/message.h \
  system/logger.h
 obj/tpcc_wl.o: benchmarks/tpcc_wl.cpp system/global.h config.h \
@@ -143,16 +194,19 @@ obj/tpcc_wl.o: benchmarks/tpcc_wl.cpp system/global.h config.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/mem_alloc.h framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h storage/index_hash.h \
  storage/index_base.h storage/index_btree.h benchmarks/tpcc_helper.h \
- system/mem_alloc.h benchmarks/tpcc_const.h
+ benchmarks/tpcc_const.h
 obj/ycsb_wl.o: benchmarks/ycsb_wl.cpp system/global.h config.h \
  statistics/stats.h statistics/stats_array.h system/pool.h \
  system/global.h system/helper.h system/concurrentqueue.h \
@@ -163,18 +217,20 @@ obj/ycsb_wl.o: benchmarks/ycsb_wl.cpp system/global.h config.h \
  storage/row.h storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/query.h system/mem_alloc.h \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h storage/index_hash.h \
  storage/index_base.h storage/index_btree.h storage/catalog.h \
  system/manager.h concurrency_control/row_lock.h \
- concurrency_control/row_ts.h concurrency_control/row_mvcc.h \
- system/mem_alloc.h system/query.h
+ concurrency_control/row_ts.h concurrency_control/row_mvcc.h
 obj/tpcc_query.o: benchmarks/tpcc_query.cpp system/query.h system/global.h \
  config.h statistics/stats.h statistics/stats_array.h system/pool.h \
  system/helper.h system/concurrentqueue.h system/txn_table.h \
@@ -186,13 +242,15 @@ obj/tpcc_query.o: benchmarks/tpcc_query.cpp system/query.h system/global.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h transport/message.h \
  system/logger.h system/array.h
 obj/ycsb_txn.o: benchmarks/ycsb_txn.cpp system/global.h config.h \
@@ -206,19 +264,22 @@ obj/ycsb_txn.o: benchmarks/ycsb_txn.cpp system/global.h config.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/mem_alloc.h framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h storage/index_hash.h \
  storage/index_base.h storage/index_btree.h storage/catalog.h \
  system/manager.h concurrency_control/row_lock.h \
  concurrency_control/row_ts.h concurrency_control/row_mvcc.h \
- system/mem_alloc.h system/msg_queue.h system/lock_free_queue.h \
- transport/message.h system/logger.h
+ system/msg_queue.h system/lock_free_queue.h transport/message.h \
+ system/logger.h
 obj/tpcc_helper.o: benchmarks/tpcc_helper.cpp benchmarks/tpcc_helper.h \
  system/global.h config.h statistics/stats.h statistics/stats_array.h \
  system/pool.h system/global.h system/helper.h system/concurrentqueue.h \
@@ -234,16 +295,19 @@ obj/pps_wl.o: benchmarks/pps_wl.cpp system/global.h config.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/mem_alloc.h framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h storage/index_hash.h \
  storage/index_base.h storage/index_btree.h benchmarks/pps_helper.h \
- benchmarks/tpcc_helper.h system/mem_alloc.h
+ benchmarks/tpcc_helper.h
 obj/pps_query.o: benchmarks/pps_query.cpp system/query.h system/global.h \
  config.h statistics/stats.h statistics/stats_array.h system/pool.h \
  system/helper.h system/concurrentqueue.h system/txn_table.h \
@@ -255,13 +319,15 @@ obj/pps_query.o: benchmarks/pps_query.cpp system/query.h system/global.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h transport/message.h \
  system/logger.h system/array.h
 obj/tpcc_txn.o: benchmarks/tpcc_txn.cpp benchmarks/tpcc.h system/wl.h \
@@ -275,18 +341,20 @@ obj/tpcc_txn.o: benchmarks/tpcc_txn.cpp benchmarks/tpcc.h system/wl.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/mem_alloc.h framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h storage/index_hash.h \
  storage/index_base.h storage/index_btree.h benchmarks/tpcc_const.h \
- transport/transport.h transport/nn.hpp system/msg_queue.h \
- system/lock_free_queue.h transport/message.h system/logger.h \
- system/array.h
+ system/msg_queue.h system/lock_free_queue.h transport/message.h \
+ system/logger.h system/array.h
 obj/pps_helper.o: benchmarks/pps_helper.cpp benchmarks/pps_helper.h \
  system/global.h config.h statistics/stats.h statistics/stats_array.h \
  system/pool.h system/global.h system/helper.h system/concurrentqueue.h \
@@ -304,17 +372,20 @@ obj/pps_txn.o: benchmarks/pps_txn.cpp benchmarks/pps.h system/wl.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/mem_alloc.h framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h storage/index_hash.h \
- storage/index_base.h storage/index_btree.h transport/transport.h \
- transport/nn.hpp system/msg_queue.h system/lock_free_queue.h \
- transport/message.h system/logger.h system/array.h
+ storage/index_base.h storage/index_btree.h system/msg_queue.h \
+ system/lock_free_queue.h transport/message.h system/logger.h \
+ system/array.h
 obj/client_query.o: client/client_query.cpp client/client_query.h \
  system/global.h config.h statistics/stats.h statistics/stats_array.h \
  system/pool.h system/global.h system/helper.h system/concurrentqueue.h \
@@ -325,13 +396,15 @@ obj/client_query.o: client/client_query.cpp client/client_query.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h benchmarks/ycsb_query.h \
  system/array.h benchmarks/tpcc_query.h benchmarks/pps_query.h
 obj/client_txn.o: client/client_txn.cpp client/client_txn.h system/global.h \
@@ -407,18 +480,21 @@ obj/row.o: storage/row.cpp system/global.h config.h statistics/stats.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/query.h system/array.h system/mem_alloc.h \
+ system/mem_alloc.h framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h storage/catalog.h system/helper.h \
- storage/row.h system/txn.h system/array.h system/mem_alloc.h \
- concurrency_control/row_lock.h concurrency_control/row_ts.h \
- concurrency_control/row_mvcc.h concurrency_control/row_occ.h \
- concurrency_control/row_maat.h system/mem_alloc.h system/manager.h
+ storage/row.h system/txn.h concurrency_control/row_lock.h \
+ concurrency_control/row_ts.h concurrency_control/row_mvcc.h \
+ concurrency_control/row_occ.h concurrency_control/row_maat.h \
+ system/manager.h
 obj/table.o: storage/table.cpp system/global.h config.h statistics/stats.h \
  statistics/stats_array.h system/pool.h system/global.h system/helper.h \
  system/concurrentqueue.h system/txn_table.h system/logger.h \
@@ -427,15 +503,17 @@ obj/table.o: storage/table.cpp system/global.h config.h statistics/stats.h \
  storage/row.h storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/query.h system/array.h system/mem_alloc.h \
+ system/mem_alloc.h framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
- storage/../framework/../storage/row.h storage/catalog.h storage/row.h \
- system/mem_alloc.h
+ storage/../framework/utils/transaction.h framework/order.h \
+ storage/../framework/../storage/row.h storage/catalog.h storage/row.h
 obj/message.o: transport/message.cpp system/mem_alloc.h system/global.h \
  config.h statistics/stats.h statistics/stats_array.h system/pool.h \
  system/helper.h system/concurrentqueue.h system/txn_table.h \
@@ -474,13 +552,17 @@ obj/wl.o: system/wl.cpp system/global.h config.h statistics/stats.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/query.h system/global.h system/helper.h \
+ system/array.h system/mem_alloc.h system/mem_alloc.h \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h storage/index_hash.h \
  system/helper.h storage/index_base.h storage/index_btree.h \
  storage/catalog.h system/mem_alloc.h
@@ -514,13 +596,14 @@ obj/global.o: system/global.cpp system/global.h config.h statistics/stats.h \
  system/../framework/group_membership.h \
  system/../framework/utils/transaction.h \
  system/../framework/utils/metadata.cpp \
- system/../framework/utils/content.h framework/utils/node.h \
- system/../framework/order.h system/../framework/utils/metadata.cpp \
- system/../framework/utils/node.h system/../framework/utils/version.h \
- system/../framework/replication.h \
+ system/../framework/utils/content.h system/mem_alloc.h \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h system/../framework/order.h \
+ system/../framework/utils/metadata.cpp system/../framework/utils/node.h \
+ system/../framework/utils/version.h system/../framework/replication.h \
  system/../framework/utils/concurrency.h \
  system/../framework/utils/../../system/global.h \
- system/../framework/utils/transaction.h \
+ system/../framework/utils/transaction.h framework/order.h \
  system/../framework/../storage/row.h
 obj/sim_manager.o: system/sim_manager.cpp system/global.h config.h \
  statistics/stats.h statistics/stats_array.h system/pool.h \
@@ -540,17 +623,20 @@ obj/txn.o: system/txn.cpp system/helper.h system/global.h config.h \
  storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/query.h system/mem_alloc.h \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h storage/catalog.h system/helper.h \
  storage/index_btree.h storage/index_base.h storage/index_hash.h \
  system/msg_queue.h system/lock_free_queue.h transport/message.h \
- system/logger.h system/array.h benchmarks/ycsb_query.h system/query.h \
+ system/logger.h system/array.h benchmarks/ycsb_query.h \
  benchmarks/tpcc_query.h benchmarks/pps_query.h \
  concurrency_control/maat.h
 obj/msg_queue.o: system/msg_queue.cpp system/msg_queue.h system/global.h \
@@ -642,20 +728,21 @@ obj/main.o: system/main.cpp system/global.h config.h statistics/stats.h \
  system/../framework/utils/content.h system/../framework/framework.h \
  system/../framework/utils/content.h \
  system/../framework/group_membership.h \
- system/../framework/utils/transaction.h framework/utils/node.h \
- system/../framework/order.h system/../framework/utils/metadata.cpp \
- system/../framework/utils/node.h system/../framework/utils/version.h \
- system/../framework/replication.h \
+ system/../framework/utils/transaction.h transport/transport.h \
+ transport/nn.hpp system/mem_alloc.h framework/utils/node.h \
+ framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h system/../framework/order.h \
+ system/../framework/utils/metadata.cpp system/../framework/utils/node.h \
+ system/../framework/utils/version.h system/../framework/replication.h \
  system/../framework/utils/concurrency.h \
  system/../framework/utils/../../system/global.h \
- system/../framework/utils/transaction.h \
+ system/../framework/utils/transaction.h framework/order.h \
  system/../framework/../storage/row.h system/calvin_thread.h \
  system/abort_thread.h system/io_thread.h system/log_thread.h \
  system/manager.h system/query.h concurrency_control/occ.h \
- transport/transport.h transport/nn.hpp system/msg_queue.h \
- system/lock_free_queue.h benchmarks/ycsb_query.h system/array.h \
- system/sequencer.h system/abort_queue.h system/work_queue.h \
- concurrency_control/maat.h client/client_query.h
+ system/msg_queue.h system/lock_free_queue.h benchmarks/ycsb_query.h \
+ system/array.h system/sequencer.h system/abort_queue.h \
+ system/work_queue.h concurrency_control/maat.h client/client_query.h
 obj/parser.o: system/parser.cpp system/global.h config.h statistics/stats.h \
  statistics/stats_array.h system/pool.h system/helper.h \
  system/concurrentqueue.h system/txn_table.h system/logger.h \
@@ -669,19 +756,22 @@ obj/worker_thread.o: system/worker_thread.cpp system/global.h config.h \
  system/../framework/utils/content.h storage/row.h system/global.h \
  system/../framework/framework.h system/../framework/utils/content.h \
  system/../framework/group_membership.h \
- system/../framework/utils/transaction.h framework/utils/node.h \
- system/../framework/order.h system/../framework/utils/metadata.cpp \
- system/../framework/utils/node.h system/../framework/utils/version.h \
- system/../framework/replication.h \
+ system/../framework/utils/transaction.h transport/transport.h \
+ transport/nn.hpp system/query.h system/global.h system/helper.h \
+ system/array.h system/mem_alloc.h system/mem_alloc.h \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h system/../framework/order.h \
+ system/../framework/utils/metadata.cpp system/../framework/utils/node.h \
+ system/../framework/utils/version.h system/../framework/replication.h \
  system/../framework/utils/concurrency.h \
  system/../framework/utils/../../system/global.h \
- system/../framework/utils/transaction.h \
+ system/../framework/utils/transaction.h framework/order.h \
  system/../framework/../storage/row.h system/txn.h system/array.h \
- system/mem_alloc.h system/wl.h system/query.h benchmarks/ycsb_query.h \
- system/helper.h system/query.h system/array.h benchmarks/tpcc_query.h \
- transport/msg_thread.h transport/nn.hpp system/msg_queue.h \
- system/lock_free_queue.h system/work_queue.h transport/message.h \
- system/logger.h system/abort_queue.h concurrency_control/maat.h
+ system/wl.h system/query.h benchmarks/ycsb_query.h system/helper.h \
+ system/array.h benchmarks/tpcc_query.h transport/msg_thread.h \
+ system/msg_queue.h system/lock_free_queue.h system/work_queue.h \
+ transport/message.h system/logger.h system/abort_queue.h \
+ concurrency_control/maat.h
 obj/mem_alloc.o: system/mem_alloc.cpp system/mem_alloc.h system/global.h \
  config.h statistics/stats.h statistics/stats_array.h system/pool.h \
  system/helper.h system/concurrentqueue.h system/txn_table.h \
@@ -696,15 +786,18 @@ obj/query.o: system/query.cpp system/query.h system/global.h config.h \
  storage/row.h storage/../framework/group_membership.h \
  storage/../framework/utils/transaction.h \
  storage/../framework/utils/metadata.cpp \
- storage/../framework/utils/content.h framework/utils/node.h \
- storage/../framework/order.h storage/../framework/utils/metadata.cpp \
+ storage/../framework/utils/content.h transport/transport.h \
+ transport/nn.hpp system/query.h system/mem_alloc.h \
+ framework/utils/node.h framework/utils/transaction.h \
+ framework/utils/../../transport/transport.h storage/../framework/order.h \
+ storage/../framework/utils/metadata.cpp \
  storage/../framework/utils/node.h storage/../framework/utils/version.h \
  storage/../framework/replication.h \
  storage/../framework/utils/concurrency.h \
  storage/../framework/utils/../../system/global.h \
- storage/../framework/utils/transaction.h \
+ storage/../framework/utils/transaction.h framework/order.h \
  storage/../framework/../storage/row.h benchmarks/ycsb_query.h \
- system/helper.h system/query.h system/array.h benchmarks/tpcc_query.h \
+ system/helper.h system/array.h benchmarks/tpcc_query.h \
  benchmarks/pps_query.h
 obj/sequencer.o: system/sequencer.cpp system/global.h config.h \
  statistics/stats.h statistics/stats_array.h system/pool.h \

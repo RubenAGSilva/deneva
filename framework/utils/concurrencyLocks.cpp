@@ -3,6 +3,7 @@
 #include "mem_alloc.h"
 #include "content.h"
 #include "transaction.h"
+#include "order.h"
 
 CC_Lock::CC_Lock(Content* c){
     content = c;
@@ -25,9 +26,7 @@ CC_Lock::CC_Lock(Content* c){
 Content* CC_Lock::read(TransactionF* transaction){
     if(getControl(transaction, RD)){
         transaction->addToReadSet(content); 
-        printf("---- id: %lu | transaction: %lu \n", content->getKey(), transaction->getId());
         transaction->addLockDetained(content->getKey()); 
-        fflush(stdout);
         return content;
     }
     return return_invalidContent();
@@ -36,8 +35,12 @@ Content* CC_Lock::read(TransactionF* transaction){
 Content* CC_Lock::write(TransactionF* transaction, Content* content1){
    if(getControl(transaction, WR)){
         transaction->addToWriteSet(content1); 
-        transaction->addLockDetained(content1->getKey()); 
-        return content1; //newly content
+        transaction->addLockDetained(content1->getKey());
+
+        previousContent = content;
+        content = content1; 
+
+        return content; //newly content
    }
     return return_invalidContent();
    
@@ -52,7 +55,7 @@ bool CC_Lock::getControl(TransactionF* transaction, access_t operation){
     bool success = false;
 
     if (g_central_man) {
-        //Coordinator to manage the locks
+        order->lockGet(content);
     }else{
         pthread_mutex_lock( latch );
     }
@@ -189,7 +192,7 @@ bool CC_Lock::getControl(TransactionF* transaction, access_t operation){
 final:
     if (g_central_man){
         //manager release lock
-        //glob_manager.release_row(_row);
+        order->lockRelease(content);
     }else{
         pthread_mutex_unlock( latch );
     }
@@ -211,7 +214,7 @@ void CC_Lock::releaseControl(TransactionF* transaction){
     // }
 #endif
       if (g_central_man){
-          //glob_manager.lock_row(_row);
+          order->lockGet(content);
           //manager get the lock
       }else {
           pthread_mutex_lock( latch );
@@ -294,7 +297,7 @@ void CC_Lock::releaseControl(TransactionF* transaction){
       }
 
         if (g_central_man){
-          //glob_manager.release_row(_row);
+          order->lockRelease(content);
           //manager release latch
         }else{
           pthread_mutex_unlock( latch );
@@ -340,7 +343,12 @@ Content* CC_Lock::return_invalidContent(){
     return new Content(-1, NULL);
 }
 
-void CC_Lock::setContent(Content* content1){
-    delete content; //unable to rollback?
-    content = content1;
+
+void CC_Lock::commitWrites(){ //dont call after abort! only after commit
+    delete previousContent; 
+}
+
+void CC_Lock::abortWrites(){
+    delete content;
+    content = previousContent;
 }

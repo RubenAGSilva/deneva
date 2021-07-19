@@ -79,6 +79,8 @@ class Logger;
 class TimeTable;
 class interfaceFramework;
 class Framework;
+class interfaceOrder;
+class Order;
 
 typedef uint32_t UInt32;
 typedef int32_t SInt32;
@@ -115,6 +117,7 @@ extern Sequencer seq_man;
 extern Logger logger;
 extern TimeTable time_table;
 extern interfaceFramework* framework;
+extern interfaceOrder* order;
 
 extern bool volatile warmup_done;
 extern bool volatile enable_thread_mem_pool;

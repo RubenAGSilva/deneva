@@ -43,7 +43,7 @@ void WorkerThread::setup() {
 }
 
 TransactionF* getTransaction(Message * msg){
-  return framework->getTransaction(msg->get_txn_id());
+  return framework->getTransaction(msg->get_txn_id(), msg->return_node_id);
 }
 
 void WorkerThread::process(Message * msg) {
@@ -119,7 +119,7 @@ void WorkerThread::check_if_done(RC rc) {
     return;
   }
 
-  transaction = framework->getTransaction(txn_man->get_txn_id());
+  transaction = framework->getTransaction(txn_man->get_txn_id(), txn_man->return_id);
 
   if(rc == Commit){
     framework->commit(transaction);
@@ -145,7 +145,7 @@ void WorkerThread::calvin_wrapup() {
   } else {
     msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,CALVIN_ACK),txn_man->return_id);
   }
-  transaction = framework->getTransaction(txn_man->get_txn_id());
+  transaction = framework->getTransaction(txn_man->get_txn_id(), txn_man->return_id);
   framework->endTransaction(transaction);
   release_txn_man();
 }
@@ -165,7 +165,7 @@ void WorkerThread::commit() {
 #if !SERVER_GENERATE_QUERIES
   msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,CL_RSP),txn_man->client_id);
 #endif
-  transaction = framework->getTransaction(txn_man->get_txn_id());
+  transaction = framework->getTransaction(txn_man->get_txn_id(), txn_man->return_id);
   framework->endTransaction(transaction);
   // remove txn from pool
   release_txn_man();
@@ -185,7 +185,7 @@ void WorkerThread::abort() {
 
   txn_man->txn_stats.total_abort_time += penalty;
 
-  transaction = framework->getTransaction(txn_man->get_txn_id());
+  transaction = framework->getTransaction(txn_man->get_txn_id(), txn_man->return_id);
   framework->endTransaction(transaction);
 
 }
@@ -496,11 +496,13 @@ RC WorkerThread::process_rtxn(Message * msg) {
 					// Only set new txn_id when txn first starts
           txn_id = get_next_txn_id();
           msg->txn_id = txn_id;
-
+          
           //FRAMEWORK:
-          TransactionF* transactionF = new TransactionF(txn_id);
+          TransactionF* transactionF = new TransactionF(txn_id, msg->return_node_id);
           framework->beginTransaction(transactionF);
           transaction = getTransaction(msg); //maybe unnecessary
+
+          sleep(2);
 
 					// Put txn in txn_table
           txn_man = txn_table.get_transaction_manager(get_thd_id(),txn_id,0);
@@ -517,6 +519,7 @@ RC WorkerThread::process_rtxn(Message * msg) {
           msg->copy_to_txn(txn_man);
           DEBUG("START %ld %f %lu\n",txn_man->get_txn_id(),simulation->seconds_from_start(get_sys_clock()),txn_man->txn_stats.starttime);
           INC_STATS(get_thd_id(),local_txn_start_cnt,1);
+
 
         } else {
             txn_man->txn_stats.restart_starttime = get_sys_clock();

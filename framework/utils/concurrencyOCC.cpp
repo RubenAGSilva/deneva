@@ -22,6 +22,10 @@ Content* CC_O::read(TransactionF* transaction){
 }
 Content* CC_O::write(TransactionF* transaction, Content* content1){
 	transaction->addToWriteSet(content1);
+
+	previousContent = content;
+	content = content1;
+	
 	if (PER_ROW_VALID) {
 		assert(transaction->getTimestampCommit() > wts);
 		wts = transaction->getTimestampCommit();
@@ -39,7 +43,10 @@ bool CC_O::validate(TransactionF* transaction){
 	if (transaction->getTimestampCommit() < wts) return false;
 	else return true;
 }
-void CC_O::setContent(Content* content1){
+void CC_O::commitWrites(){
+	delete previousContent;
+}
+void CC_O::abortWrites(){
 	delete content;
-	content = content1;
+	content = previousContent;
 }

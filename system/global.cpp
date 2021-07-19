@@ -32,7 +32,8 @@
 #include "sequencer.h"
 #include "logger.h"
 #include "maat.h"
-#include "../framework/framework.h"
+//#include "../framework/framework.h"
+
 
 mem_alloc mem_allocator;
 Stats stats;
@@ -59,6 +60,7 @@ Sequencer seq_man;
 Logger logger;
 TimeTable time_table;
 interfaceFramework* framework;
+interfaceOrder* order;
 
 bool volatile warmup_done = false;
 bool volatile enable_thread_mem_pool = false;

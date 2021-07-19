@@ -1,9 +1,10 @@
 #ifndef CONCURRENCY_H
 #define CONCURRENCY_H
 
-#include "../../system/global.h"
+#include "global.h"
 #include "content.h"
 #include "transaction.h"
+#include "order.h"
 
 // enum lock_t {LOCK_EX = 0, LOCK_SH, LOCK_NONE };
 // typedef uint64_t ts_t; // time stamp type
@@ -19,7 +20,8 @@ class InterfaceConcurrencyControl{
         virtual bool getControl(TransactionF* transaction1, access_t operation) = 0;
         virtual void releaseControl(TransactionF* transaction1) = 0;
         virtual bool validate(TransactionF* transaction1) = 0;
-        virtual void setContent(Content* content1) = 0;
+        virtual void abortWrites() = 0;
+        virtual void commitWrites() = 0;
         virtual Content* getContent()=0;
 };
 
@@ -39,6 +41,7 @@ class CC_Lock : public InterfaceConcurrencyControl{
 
     private:
         Content* content;
+        Content* previousContent;
         pthread_mutex_t* latch;
         lock_t lockType;
 
@@ -62,7 +65,8 @@ class CC_Lock : public InterfaceConcurrencyControl{
         bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
         bool validate(TransactionF* transaction1) override;
-        void setContent(Content* content1) override;
+        void abortWrites() override;
+        void commitWrites() override;
         bool conflict_lock(lock_t l1, lock_t l2);
         lock_t getOperationLock(access_t operation);
 
@@ -80,6 +84,7 @@ class CC_O : public InterfaceConcurrencyControl{
         ts_t wts; // the last update time
 
         Content* content;
+        Content* previousContent;
 
         
 
@@ -90,7 +95,8 @@ class CC_O : public InterfaceConcurrencyControl{
         bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
         bool validate(TransactionF* transaction1) override;
-        void setContent(Content* content1) override;
+        void abortWrites() override;
+        void commitWrites() override;
         Content* getContent()override{return content;}
 };
 class CC_TS : public InterfaceConcurrencyControl{
@@ -103,7 +109,8 @@ class CC_TS : public InterfaceConcurrencyControl{
         bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
         bool validate(TransactionF* transaction1) override;
-        void setContent(Content* content1) override;
+        void abortWrites() override;
+        void commitWrites() override;
 };
 class CC_MVCC : public InterfaceConcurrencyControl{
     private:
@@ -115,7 +122,8 @@ class CC_MVCC : public InterfaceConcurrencyControl{
         bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
         bool validate(TransactionF* transaction1) override;
-        void setContent(Content* content1) override;
+        void abortWrites() override;
+        void commitWrites() override;
 };
 class CC_MAAT : public InterfaceConcurrencyControl{
     private:
@@ -127,7 +135,8 @@ class CC_MAAT : public InterfaceConcurrencyControl{
         bool getControl(TransactionF* transaction1, access_t operation) override;
         void releaseControl(TransactionF* transaction1) override;
         bool validate(TransactionF* transaction1) override;
-        void setContent(Content* content1) override;
+        void abortWrites() override;
+        void commitWrites() override;
         
 };
 

@@ -6,10 +6,11 @@
 
 using namespace std;
 
-TransactionF::TransactionF(uint64_t id1){
+TransactionF::TransactionF(uint64_t id1, uint64_t newNodeId){
     metadata = Metadata();
     replicated = false;
     id=id1;
+    nodeId = newNodeId;
 }
 
 void TransactionF::addToReadSet(Content* content){
@@ -44,7 +45,7 @@ uint64_t TransactionF::decr_lr() {
   return result;
 }
 
-static bool deleteAll(Content* elem){delete elem; return true;}
+static bool deleteAll(Content* elem){return true;}
 
 void TransactionF::clearSets(){
   readset.remove_if(deleteAll);

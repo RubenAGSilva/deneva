@@ -31,11 +31,13 @@ namespace configuration{
     static InterfaceConcurrencyControl* initConcurrencyControl(Content* c){
         //switch case - CCAlgorithm, case locking: ; case otimistic; case multiversion etc...
         CC_Lock* concurrencyControl = new CC_Lock(c);
+        //CC_O* concurrencyControl = new CC_O(c);
         return concurrencyControl;
     }
 
     static InterfaceConcurrencyController* initConcurrencyController(){
         ConcurrencyControllerLocks* concurrencyController = new ConcurrencyControllerLocks();
+        //ConcurrencyControllerOtimistic* concurrencyController = new ConcurrencyControllerOtimistic();
         return concurrencyController;
     }
 }
