@@ -6,11 +6,6 @@
 #include "transaction.h"
 #include "order.h"
 
-// enum lock_t {LOCK_EX = 0, LOCK_SH, LOCK_NONE };
-// typedef uint64_t ts_t; // time stamp type
-// enum access_t {RD, WR, XP, SCAN};
-// typedef uint32_t UInt32;
-
 class InterfaceConcurrencyControl{
 
 
@@ -22,7 +17,7 @@ class InterfaceConcurrencyControl{
         virtual bool validate(TransactionF* transaction1) = 0;
         virtual void abortWrites() = 0;
         virtual void commitWrites() = 0;
-        virtual Content* getContent()=0;
+        virtual Content* getContent() = 0;
 };
 
 struct CC_Entry{ // struct used by all CC algorithms - each CC might not use some of the attributes.
@@ -32,9 +27,6 @@ struct CC_Entry{ // struct used by all CC algorithms - each CC might not use som
 	CC_Entry* next;
 	CC_Entry* prev;
 
-    // Content ** rows; //[MAX_WRITE_SET]; OCC
-    // UInt32 set_size; // OCC
-    // UInt64 tn; //OCC
 };
 
 class CC_Lock : public InterfaceConcurrencyControl{
@@ -86,6 +78,7 @@ class CC_O : public InterfaceConcurrencyControl{
         Content* content;
         Content* previousContent;
 
+        Content* return_invalidContent();
         
 
     public:
@@ -99,45 +92,45 @@ class CC_O : public InterfaceConcurrencyControl{
         void commitWrites() override;
         Content* getContent()override{return content;}
 };
-class CC_TS : public InterfaceConcurrencyControl{
-    private:
+// class CC_TS : public InterfaceConcurrencyControl{
+//     private:
 
 
-    public:
-        Content* read(TransactionF* transaction1) override;
-        Content* write(TransactionF* transaction1, Content* content1) override;
-        bool getControl(TransactionF* transaction1, access_t operation) override;
-        void releaseControl(TransactionF* transaction1) override;
-        bool validate(TransactionF* transaction1) override;
-        void abortWrites() override;
-        void commitWrites() override;
-};
-class CC_MVCC : public InterfaceConcurrencyControl{
-    private:
+//     public:
+//         Content* read(TransactionF* transaction1) override;
+//         Content* write(TransactionF* transaction1, Content* content1) override;
+//         bool getControl(TransactionF* transaction1, access_t operation) override;
+//         void releaseControl(TransactionF* transaction1) override;
+//         bool validate(TransactionF* transaction1) override;
+//         void abortWrites() override;
+//         void commitWrites() override;
+// };
+// class CC_MVCC : public InterfaceConcurrencyControl{
+//     private:
 
 
-    public:
-        Content* read(TransactionF* transaction1) override;
-        Content* write(TransactionF* transaction1, Content* content1) override;
-        bool getControl(TransactionF* transaction1, access_t operation) override;
-        void releaseControl(TransactionF* transaction1) override;
-        bool validate(TransactionF* transaction1) override;
-        void abortWrites() override;
-        void commitWrites() override;
-};
-class CC_MAAT : public InterfaceConcurrencyControl{
-    private:
+//     public:
+//         Content* read(TransactionF* transaction1) override;
+//         Content* write(TransactionF* transaction1, Content* content1) override;
+//         bool getControl(TransactionF* transaction1, access_t operation) override;
+//         void releaseControl(TransactionF* transaction1) override;
+//         bool validate(TransactionF* transaction1) override;
+//         void abortWrites() override;
+//         void commitWrites() override;
+// };
+// class CC_MAAT : public InterfaceConcurrencyControl{
+//     private:
 
 
-    public:
-        Content* read(TransactionF* transaction1) override;
-        Content* write(TransactionF* transaction1, Content* content1) override;
-        bool getControl(TransactionF* transaction1, access_t operation) override;
-        void releaseControl(TransactionF* transaction1) override;
-        bool validate(TransactionF* transaction1) override;
-        void abortWrites() override;
-        void commitWrites() override;
+//     public:
+//         Content* read(TransactionF* transaction1) override;
+//         Content* write(TransactionF* transaction1, Content* content1) override;
+//         bool getControl(TransactionF* transaction1, access_t operation) override;
+//         void releaseControl(TransactionF* transaction1) override;
+//         bool validate(TransactionF* transaction1) override;
+//         void abortWrites() override;
+//         void commitWrites() override;
         
-};
+// };
 
 #endif

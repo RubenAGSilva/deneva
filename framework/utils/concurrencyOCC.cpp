@@ -13,7 +13,7 @@ CC_O::CC_O(Content* content1){
 Content* CC_O::read(TransactionF* transaction){
   	sem_wait(&_semaphore);
 	if (transaction->getTimestampStartup() < wts) {
-			//abort
+			return return_invalidContent(); //abort, maybe remove?
     }else{
 		transaction->addToReadSet(content);
 	}
@@ -49,4 +49,8 @@ void CC_O::commitWrites(){
 void CC_O::abortWrites(){
 	delete content;
 	content = previousContent;
+}
+
+Content* CC_O::return_invalidContent(){
+    return new Content(-1, NULL);
 }

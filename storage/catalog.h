@@ -21,6 +21,8 @@
 #include <vector>
 #include "global.h"
 #include "helper.h"
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 class Column {
 public:
@@ -73,8 +75,33 @@ public:
 	void 			print_schema();
 	Column * 		_columns;
 	UInt32 			tuple_size;
-private:
 	char pad[CL_SIZE - sizeof(uint64_t)*2 - sizeof(int) - sizeof(char *)*2 - sizeof(uint32_t)];
 };
+
+namespace boost{
+    namespace serialization{
+
+        template<class Archive>
+        void serialize(Archive & ar, Catalog &catalog, const unsigned int version){
+			char tableName = *catalog.table_name;
+            ar &catalog.field_cnt;
+            ar &tableName; //TODO pointer
+            ar &catalog.table_id;
+            ar &catalog._columns; //TODO pointer
+			ar &catalog.tuple_size;
+			ar &catalog.pad;
+        }
+
+		template<class Archive>
+        void serialize(Archive & ar, Column &column, const unsigned int version){
+			ar &column.id;
+			ar &column.size;
+			ar &column.index;
+			ar &*column.type; //TODO pointer
+			ar &*column.name; //TODO pointer
+			ar &column.pad;
+		}
+    }
+} //namespace boost
 
 #endif

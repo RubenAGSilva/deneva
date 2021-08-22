@@ -1,5 +1,4 @@
 #include "transaction.h"
-#include "metadata.cpp"
 #include "content.h"
 #include <list>
 #include <string>
@@ -7,24 +6,24 @@
 using namespace std;
 
 TransactionF::TransactionF(uint64_t id1, uint64_t newNodeId){
-    metadata = Metadata();
     replicated = false;
     id=id1;
     nodeId = newNodeId;
+    locksDetained = std::list<uint64_t>();
 }
 
 void TransactionF::addToReadSet(Content* content){
     readset.push_back(content);
-    //printf("Added to read set %lu \n", readset.size());
-    //fflush(stdout);
+    printf("adding lock :%lu on transaction : %lu\n",content->getKey(), id);
+    fflush(stdout);
+    locksDetained.push_back(content->getKey());
 }
 
 void TransactionF::addToWriteSet(Content* content){
     writeset.push_back(content);
-}
-
-void TransactionF::addLockDetained(uint64_t lock){
-    locksDetained.push_back(lock);
+    printf("adding lock :%lu\n",content->getKey());
+    fflush(stdout);
+    locksDetained.push_back(content->getKey());
 }
 
 uint64_t TransactionF::incr_lr() {

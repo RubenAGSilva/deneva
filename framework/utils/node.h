@@ -5,7 +5,10 @@
 #include <list>
 #include "transaction.h"
 #include "../../transport/transport.h"
+#include "blocking_queue.h"
 
+class InterfaceCommunication;
+class Communication;
 
 using namespace std;
 
@@ -23,15 +26,18 @@ class Node{
         int adminPort;
         list<int> partitions;
         Role role;
-        Socket* recvSocket;
-        Socket* sendSocket;
+        BlockingQueue<Content> writesDone;
+        
 
-        map<uint64_t,TransactionF*> mapOfTransactions;
+        
     public:
 
-        Node(Role role);
-        Node(uint64_t id, Role role, string host, int httpPort, int socketPort, int adminPort, list<int> partitions);
-        Node(uint64_t id, Role role, string host, int httpPort, int socketPort, int adminPort);
+        InterfaceCommunication* communication;
+        bool isClient;
+
+        Node(Role role, uint64_t id, bool client);
+        Node(uint64_t id, Role role, bool client, string host, int httpPort, int socketPort, int adminPort, list<int> partitions);
+        Node(uint64_t id, Role role, bool client, string host, int httpPort, int socketPort, int adminPort);
         Node() = default;
         
         uint64_t getId();
@@ -42,12 +48,7 @@ class Node{
         int getAdminPort();    
         Role getRole();
         list<int> getPartitionsIds();
-        void setRecvSocket(Socket* socket){recvSocket=socket;}
-        void setSendSocket(Socket* socket){sendSocket=socket;}
-
-        map<uint64_t,TransactionF*> getMapOfTransactions(){return mapOfTransactions;}
-        void addTransaction(TransactionF* transaction);
-        TransactionF* getTransaction(uint64_t transactionId);
+        void addContents(std::list<Content*> writeset);
 };
 
 #endif

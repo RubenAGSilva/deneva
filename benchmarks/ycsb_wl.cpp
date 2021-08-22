@@ -30,6 +30,7 @@
 #include "row_mvcc.h"
 #include "mem_alloc.h"
 #include "query.h"
+#include "framework.h"
 
 int YCSBWorkload::next_tid;
 

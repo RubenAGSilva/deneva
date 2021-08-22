@@ -1,13 +1,13 @@
-#include "concurrency_controller.h"
+#include "concurrency_manager.h"
 #include "configuration.cpp"
 
-void ConcurrencyControllerLocks::initContent(uint64_t key, row_t* row){
+void ConcurrencyManagerLocks::initContent(uint64_t key, row_t* row){
     Content* c = new Content(key, row);
     InterfaceConcurrencyControl* concurrencyControl = configuration::initConcurrencyControl(c);
-    concurrencyControlMap.insert(std::pair<uint64_t, InterfaceConcurrencyControl*>(c->getKey(), concurrencyControl));
+    concurrencyControlMap.insert(std::pair<uint64_t, InterfaceConcurrencyControl*>(c->getKey(), concurrencyControl)); //TODO maybe add a lock and unlock before insering
 }
 
-void ConcurrencyControllerLocks::write(TransactionF* transaction, uint64_t key, row_t* row){
+void ConcurrencyManagerLocks::write(TransactionF* transaction, uint64_t key, row_t* row){
 
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
     Content* content = new Content(key, row);
@@ -25,7 +25,7 @@ void ConcurrencyControllerLocks::write(TransactionF* transaction, uint64_t key, 
     #endif
 }
 
-void ConcurrencyControllerLocks::read(TransactionF* transaction, uint64_t key){
+void ConcurrencyManagerLocks::read(TransactionF* transaction, uint64_t key){
 
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
     Content* returnContent = concurrencyControl->read(transaction); 
@@ -43,11 +43,12 @@ void ConcurrencyControllerLocks::read(TransactionF* transaction, uint64_t key){
 
 }
 
-bool ConcurrencyControllerLocks::validate(TransactionF* transaction){
+bool ConcurrencyManagerLocks::validate(TransactionF* transaction){
+    transaction->setValidated(true);
     return true;
 }
 
-void ConcurrencyControllerLocks::commit(TransactionF* transaction){
+void ConcurrencyManagerLocks::commit(TransactionF* transaction){
     list<Content*> listOfOperations=transaction->getWriteSet();
     for(Content* c : listOfOperations){
         concurrencyControlMap.at(c->getKey())->commitWrites(); //remove previous content values
@@ -55,7 +56,7 @@ void ConcurrencyControllerLocks::commit(TransactionF* transaction){
     releaseLocks(transaction);
 }
 
-void ConcurrencyControllerLocks::abort(TransactionF* transaction){
+void ConcurrencyManagerLocks::abort(TransactionF* transaction){
     list<Content*> listOfOperations=transaction->getWriteSet();
     for(Content* c : listOfOperations){
         concurrencyControlMap.at(c->getKey())->abortWrites(); 
@@ -64,7 +65,7 @@ void ConcurrencyControllerLocks::abort(TransactionF* transaction){
     
 }
 
-void ConcurrencyControllerLocks::finish(TransactionF* transaction){
+void ConcurrencyManagerLocks::finish(TransactionF* transaction){
     if(transaction->getLocksDetained().size()>0) //just to make sure
         releaseLocks(transaction);
 
@@ -72,12 +73,12 @@ void ConcurrencyControllerLocks::finish(TransactionF* transaction){
     
 }
 
-void ConcurrencyControllerLocks::releaseLocks(TransactionF* transaction){
+void ConcurrencyManagerLocks::releaseLocks(TransactionF* transaction){
     for(uint64_t i : transaction->getLocksDetained()){
         try{
         concurrencyControlMap.at(i)->releaseControl(transaction);
         }catch(std::out_of_range){
-            printf("Out of range - bug?");
+            printf("Out of range - bug?\n");
             fflush(stdout);
             sleep(50);
         }

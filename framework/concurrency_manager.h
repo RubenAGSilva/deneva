@@ -1,11 +1,11 @@
-#ifndef CONCURRENCY_CONTROLLER_H
-#define CONCURRENCY_CONTROLLER_H
+#ifndef CONCURRENCY_MANAGER_H
+#define CONCURRENCY_MANAGER_H
 
 #include "utils/transaction.h"
 #include "utils/concurrency.h"
 #include "mem_alloc.h"
 
-class InterfaceConcurrencyController{
+class InterfaceConcurrencyManager{
     public:
         virtual void initContent(uint64_t key, row_t* row)=0;
         virtual void write(TransactionF* transaction, uint64_t key, row_t* row)=0;
@@ -18,7 +18,7 @@ class InterfaceConcurrencyController{
 
 };
 
-class ConcurrencyControllerLocks : public InterfaceConcurrencyController{
+class ConcurrencyManagerLocks : public InterfaceConcurrencyManager{
 
     private:
         map<uint64_t, InterfaceConcurrencyControl*> concurrencyControlMap;
@@ -35,7 +35,7 @@ class ConcurrencyControllerLocks : public InterfaceConcurrencyController{
         void finish(TransactionF* transaction) override;
 };
 
-class ConcurrencyControllerOtimistic : public InterfaceConcurrencyController{
+class ConcurrencyManagerOtimistic : public InterfaceConcurrencyManager{
     
     class set_ent{
         public:
@@ -69,8 +69,8 @@ class ConcurrencyControllerOtimistic : public InterfaceConcurrencyController{
         bool test_valid(set_ent * set1, set_ent * set2);
     public:
 
-        ConcurrencyControllerOtimistic();
-        ~ConcurrencyControllerOtimistic();
+        ConcurrencyManagerOtimistic();
+        ~ConcurrencyManagerOtimistic();
         void initContent(uint64_t key, row_t* row) override;
         void write(TransactionF* transaction, uint64_t key, row_t* row) override;
         void read(TransactionF* transaction, uint64_t key) override;

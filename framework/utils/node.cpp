@@ -1,69 +1,73 @@
 #include <string>
 #include "node.h"
 #include <list>
+#include "configuration.cpp"
+#include "communication.h"
 
 using namespace std;
 
-        Node::Node(Role role){
-            role=role;
-        }
+Node::Node(Role role, uint64_t id1, bool client){
+    role=role;
+    id = id1;
+    communication = configuration::initCommunication(id1);
+    isClient = client;
+}
 
-        Node::Node(uint64_t id1, Role role1, string host1, int httpPort1, int socketPort1, int adminPort1, list<int> partitions1){
-            id = id1;
-            role = role1;
-            host = host1;
-            httpPort = httpPort1;
-            socketPort = socketPort1;
-            adminPort = adminPort1;
-            partitions = partitions1;
-        }
-        Node::Node(uint64_t id1, Role role1, string host1, int httpPort1, int socketPort1, int adminPort1){
-            id = id1;
-            role = role1;
-            host = host1;
-            httpPort = httpPort1;
-            socketPort = socketPort1;
-            adminPort = adminPort1;
-        }
-        
-        uint64_t Node::getId(){
-            return id;
-        }
+Node::Node(uint64_t id1, Role role1, bool client, string host1, int httpPort1, int socketPort1, int adminPort1, list<int> partitions1){
+    id = id1;
+    role = role1;
+    host = host1;
+    httpPort = httpPort1;
+    socketPort = socketPort1;
+    adminPort = adminPort1;
+    partitions = partitions1;
+    communication = configuration::initCommunication(id1);
+    isClient = client;
+}
+Node::Node(uint64_t id1, Role role1, bool client, string host1, int httpPort1, int socketPort1, int adminPort1){
+    id = id1;
+    role = role1;
+    host = host1;
+    httpPort = httpPort1;
+    socketPort = socketPort1;
+    adminPort = adminPort1;
+    communication = configuration::initCommunication(id1);
+    isClient = client;
+}
 
-        int Node::getZoneId(){
-            return zoneId;
-        } 
+uint64_t Node::getId(){
+    return id;
+}
 
-        string Node::getHost(){
-            return host;
-        }
+int Node::getZoneId(){
+    return zoneId;
+} 
 
-        int Node::getHttpPort(){
-            return httpPort;
-        }
+string Node::getHost(){
+    return host;
+}
 
-        int Node::getSocketPort(){
-            return socketPort;
-        }
-        
-        int Node::getAdminPort(){
-            return adminPort;
-        }
-        
-        Role Node::getRole(){
-            return role;
-        }
-        list<int> Node::getPartitionsIds(){
-            return partitions;
-        }
-        void Node::addTransaction(TransactionF* transaction){
-            try{
-                mapOfTransactions.erase(transaction->getId());
-                mapOfTransactions.insert(std::pair<uint64_t,TransactionF*>(transaction->getId(), transaction));
-            }catch(std::out_of_range){
-                mapOfTransactions.insert(std::pair<uint64_t,TransactionF*>(transaction->getId(), transaction));
-            }
-        }
-        TransactionF* Node::getTransaction(uint64_t transactionId){
-            return mapOfTransactions.at(transactionId);
-        }
+int Node::getHttpPort(){
+    return httpPort;
+}
+
+int Node::getSocketPort(){
+    return socketPort;
+}
+
+int Node::getAdminPort(){
+    return adminPort;
+}
+
+Role Node::getRole(){
+    return role;
+}
+list<int> Node::getPartitionsIds(){
+    return partitions;
+}
+void Node::addContents(std::list<Content*> writeset){ 
+    //check ts so its ordered TODO change to transaction argument and change from blockingqueue to a lock
+    for(Content* c : writeset){
+        writesDone.push(*c);
+    }
+}

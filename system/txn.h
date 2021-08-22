@@ -21,6 +21,7 @@
 #include "helper.h"
 #include "semaphore.h"
 #include "array.h"
+#include "framework.h"
 //#include "wl.h"
 
 class Workload;

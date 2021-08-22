@@ -43,7 +43,7 @@ void WorkerThread::setup() {
 }
 
 TransactionF* getTransaction(Message * msg){
-  return framework->getTransaction(msg->get_txn_id(), msg->return_node_id);
+  return framework->getTransaction(msg->get_txn_id());
 }
 
 void WorkerThread::process(Message * msg) {
@@ -119,14 +119,14 @@ void WorkerThread::check_if_done(RC rc) {
     return;
   }
 
-  transaction = framework->getTransaction(txn_man->get_txn_id(), txn_man->return_id);
+  transaction = framework->getTransaction(txn_man->get_txn_id());
 
   if(rc == Commit){
-    framework->commit(transaction);
+    framework->commit(transaction); //TODO maybe remove
     commit();
   }
   if(rc == Abort){
-    framework->abort(transaction);
+    framework->abort(transaction); //TODO maybe remove
     abort();
   }
 }
@@ -145,7 +145,7 @@ void WorkerThread::calvin_wrapup() {
   } else {
     msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,CALVIN_ACK),txn_man->return_id);
   }
-  transaction = framework->getTransaction(txn_man->get_txn_id(), txn_man->return_id);
+  transaction = framework->getTransaction(txn_man->get_txn_id());
   framework->endTransaction(transaction);
   release_txn_man();
 }
@@ -165,7 +165,7 @@ void WorkerThread::commit() {
 #if !SERVER_GENERATE_QUERIES
   msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,CL_RSP),txn_man->client_id);
 #endif
-  transaction = framework->getTransaction(txn_man->get_txn_id(), txn_man->return_id);
+  transaction = framework->getTransaction(txn_man->get_txn_id());
   framework->endTransaction(transaction);
   // remove txn from pool
   release_txn_man();
@@ -185,7 +185,7 @@ void WorkerThread::abort() {
 
   txn_man->txn_stats.total_abort_time += penalty;
 
-  transaction = framework->getTransaction(txn_man->get_txn_id(), txn_man->return_id);
+  transaction = framework->getTransaction(txn_man->get_txn_id());
   framework->endTransaction(transaction);
 
 }
@@ -304,19 +304,22 @@ RC WorkerThread::process_rfin(Message * msg) {
 
   if(((FinishMessage*)msg)->rc == Abort) {
     txn_man->abort();
+    transaction = getTransaction(msg);
+    framework->abort(transaction);
     txn_man->reset();
     txn_man->reset_query();
     msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,RACK_FIN),GET_NODE_ID(msg->get_txn_id()));
+    framework->endTransaction(transaction);
     return Abort;
   } 
   txn_man->commit();
+  transaction = getTransaction(msg);
+  framework->commit(transaction);
   //if(!txn_man->query->readonly() || CC_ALG == OCC)
   if(!((FinishMessage*)msg)->readonly || CC_ALG == MAAT || CC_ALG == OCC)
     msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,RACK_FIN),GET_NODE_ID(msg->get_txn_id()));
-  transaction = getTransaction(msg);
-  framework->endTransaction(transaction);
   release_txn_man();
-
+  framework->endTransaction(transaction);
   return RCOK;
 }
 
@@ -356,16 +359,19 @@ RC WorkerThread::process_rack_prep(Message * msg) {
     rc = Abort;
   }
   txn_man->send_finish_messages();
+  transaction = getTransaction(msg);
   if(rc == Abort) {
     txn_man->abort();
+    framework->abort(transaction);
   } else {
     txn_man->commit();
+    framework->commit(transaction);
   }
 
   return rc;
 }
 
-RC WorkerThread::process_rack_rfin(Message * msg) {
+RC WorkerThread::process_rack_rfin(Message * msg) { //AFTER X responses it finally commits ! This happens after every partition commits and then the node responsible fro the transaction will then release all resources. This is where that happens.
   DEBUG("RFIN_ACK %ld\n",msg->get_txn_id());
 
   RC rc = RCOK;
@@ -382,11 +388,11 @@ RC WorkerThread::process_rack_rfin(Message * msg) {
 
   if(txn_man->get_rc() == RCOK) {
     //txn_man->commit();
-    framework->commit(transaction);
+    //framework->commit(transaction); // TODO maybe REMOVE
     commit();
   } else {
     //txn_man->abort();
-    framework->abort(transaction);
+    //framework->abort(transaction); // TODO maybe REMOVE
     abort();
   }
   return rc;
@@ -474,6 +480,8 @@ RC WorkerThread::process_rprepare(Message * msg) {
     // Clean up as soon as abort is possible
     if(rc == Abort) {
       txn_man->abort();
+      transaction = getTransaction(msg);
+      framework->abort(transaction);
     }
 
     return rc;
@@ -497,8 +505,11 @@ RC WorkerThread::process_rtxn(Message * msg) {
           txn_id = get_next_txn_id();
           msg->txn_id = txn_id;
           
+          printf("____ txnid: %lu | nodeCnt: %u | nodeId: %lu\n", txn_id, g_node_cnt, txn_id%g_node_cnt);
+          fflush(stdout);
+
           //FRAMEWORK:
-          TransactionF* transactionF = new TransactionF(txn_id, msg->return_node_id);
+          TransactionF* transactionF = new TransactionF(txn_id, txn_id%g_node_cnt);
           framework->beginTransaction(transactionF);
           transaction = getTransaction(msg); //maybe unnecessary
 
@@ -573,8 +584,6 @@ RC WorkerThread::process_log_msg_rsp(Message * msg) {
   DEBUG("REPLICA RSP %ld\n",msg->get_txn_id());
   txn_man->repl_finished = true;
   if(txn_man->log_flushed){
-    transaction = getTransaction(msg);
-    framework->commit(transaction);
     commit();
   }
   return RCOK;
@@ -589,8 +598,6 @@ RC WorkerThread::process_log_flushed(Message * msg) {
 
   txn_man->log_flushed = true;
   if(g_repl_cnt == 0 || txn_man->repl_finished){
-    transaction = getTransaction(msg);
-    framework->commit(transaction);
     commit();
   }
   return RCOK; 

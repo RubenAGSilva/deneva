@@ -18,13 +18,15 @@
 #define _TABLE_H_
 
 #include "global.h"
-#include "../framework/framework.h"
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 // TODO sequential scan is not supported yet.
 // only index access is supported for table. 
 
 class Catalog;
 class row_t;
+class Framework;
 
 class table_t
 {
@@ -49,6 +51,11 @@ private:
   uint32_t table_id;
 	uint64_t * 		cur_tab_size;
 	char 			pad[CL_SIZE - sizeof(void *)*3 - sizeof(uint32_t)];
+
+	friend class boost::serialization::access;
+    template<class Archive>
+        void serialize(Archive &ar, const unsigned int version){
+        }
 };
 
 #endif

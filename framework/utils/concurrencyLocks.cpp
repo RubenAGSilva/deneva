@@ -26,7 +26,6 @@ CC_Lock::CC_Lock(Content* c){
 Content* CC_Lock::read(TransactionF* transaction){
     if(getControl(transaction, RD)){
         transaction->addToReadSet(content); 
-        transaction->addLockDetained(content->getKey()); 
         return content;
     }
     return return_invalidContent();
@@ -34,8 +33,7 @@ Content* CC_Lock::read(TransactionF* transaction){
 
 Content* CC_Lock::write(TransactionF* transaction, Content* content1){
    if(getControl(transaction, WR)){
-        transaction->addToWriteSet(content1); 
-        transaction->addLockDetained(content1->getKey());
+        transaction->addToWriteSet(content1);
 
         previousContent = content;
         content = content1; 

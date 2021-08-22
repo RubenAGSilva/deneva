@@ -1,7 +1,7 @@
-#include "concurrency_controller.h"
+#include "concurrency_manager.h"
 #include "configuration.cpp"
 
-ConcurrencyControllerOtimistic::ConcurrencyControllerOtimistic(){
+ConcurrencyManagerOtimistic::ConcurrencyManagerOtimistic(){
     sem_init(&_semaphore, 0, 1);
 	tnc = 0;
 	his_len = 0;
@@ -10,20 +10,20 @@ ConcurrencyControllerOtimistic::ConcurrencyControllerOtimistic(){
 	lock_all = false;
 }
 
-ConcurrencyControllerOtimistic::set_ent::set_ent() {
+ConcurrencyManagerOtimistic::set_ent::set_ent() {
 	set_size = 0;
 	txn = NULL;
 	rows = NULL;
 	next = NULL;
 }
 
-void ConcurrencyControllerOtimistic::initContent(uint64_t key, row_t* row){
+void ConcurrencyManagerOtimistic::initContent(uint64_t key, row_t* row){
 	Content* c = new Content(key, row);
     InterfaceConcurrencyControl* concurrencyControl = configuration::initConcurrencyControl(c);
-    concurrencyControlMap.insert(std::pair<uint64_t, InterfaceConcurrencyControl*>(c->getKey(), concurrencyControl));
+    concurrencyControlMap.insert(std::pair<uint64_t, InterfaceConcurrencyControl*>(c->getKey(), concurrencyControl)); //TODO maybe add and release lock before insert
 }
 
-void ConcurrencyControllerOtimistic::write(TransactionF* transaction, uint64_t key, row_t* row) {
+void ConcurrencyManagerOtimistic::write(TransactionF* transaction, uint64_t key, row_t* row) {
 
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
     Content* content = new Content(key, row);
@@ -33,7 +33,7 @@ void ConcurrencyControllerOtimistic::write(TransactionF* transaction, uint64_t k
     fflush(stdout);
 }
 
-void ConcurrencyControllerOtimistic::read(TransactionF* transaction, uint64_t key) {
+void ConcurrencyManagerOtimistic::read(TransactionF* transaction, uint64_t key) {
 	
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
     Content* returnContent = concurrencyControl->read(transaction);
@@ -42,7 +42,7 @@ void ConcurrencyControllerOtimistic::read(TransactionF* transaction, uint64_t ke
     fflush(stdout);
 }
 
-bool ConcurrencyControllerOtimistic::validate(TransactionF* transaction) {
+bool ConcurrencyManagerOtimistic::validate(TransactionF* transaction) {
 	if(transaction->isValidated()) //change TODO - aborted txns are validated twice
 		return true;
 	
@@ -62,7 +62,7 @@ bool ConcurrencyControllerOtimistic::validate(TransactionF* transaction) {
 	return transaction->isValidated();
 }
 
-void ConcurrencyControllerOtimistic::commit(TransactionF* transaction) {
+void ConcurrencyManagerOtimistic::commit(TransactionF* transaction) {
 	list<Content*> listOfOperations=transaction->getWriteSet();
 
     for(Content* c : listOfOperations){
@@ -70,7 +70,7 @@ void ConcurrencyControllerOtimistic::commit(TransactionF* transaction) {
     }
 }
 
-void ConcurrencyControllerOtimistic::abort(TransactionF* transaction) {
+void ConcurrencyManagerOtimistic::abort(TransactionF* transaction) {
 	list<Content*> listOfOperations=transaction->getWriteSet();
 
     for(Content* c : listOfOperations){
@@ -78,7 +78,7 @@ void ConcurrencyControllerOtimistic::abort(TransactionF* transaction) {
     }
 }
 
-void ConcurrencyControllerOtimistic::finish(TransactionF* transaction) {
+void ConcurrencyManagerOtimistic::finish(TransactionF* transaction) {
 	#if PER_ROW_VALID
 		per_row_finish(transaction);
 	#else
@@ -93,7 +93,7 @@ void ConcurrencyControllerOtimistic::finish(TransactionF* transaction) {
 bool byPrimaryKey(Content *a, Content *b){
     return (a->getKey() < b->getKey());
 }
-bool ConcurrencyControllerOtimistic::per_row_validate(TransactionF * transaction){
+bool ConcurrencyManagerOtimistic::per_row_validate(TransactionF * transaction){
 	// sort all rows accessed in primary key order.
     std::list<Content*> listReadSet = transaction->getReadSet();
 	std::list<Content*> listWriteSet = transaction->getWriteSet();
@@ -123,7 +123,7 @@ bool ConcurrencyControllerOtimistic::per_row_validate(TransactionF * transaction
 	return ok;
 
 }
-bool ConcurrencyControllerOtimistic::central_validate(TransactionF * transaction){
+bool ConcurrencyManagerOtimistic::central_validate(TransactionF * transaction){
     uint64_t start_tn = transaction->getTimestampStartup();
     uint64_t finish_tn;
 	//set_ent ** finish_active;
@@ -144,7 +144,7 @@ bool ConcurrencyControllerOtimistic::central_validate(TransactionF * transaction
   sem_wait(&_semaphore);
 	//finish_tn = tnc;
   assert(!g_ts_batch_alloc);
-	order->timestampCommit(transaction, Metadata());
+	order->timestampCommit(transaction);
 	finish_tn = transaction->getTimestampCommit();
 	ent = active;
 	f_active_len = active_len;
@@ -228,13 +228,13 @@ final:
 	  return false;
 	}
 }
-void ConcurrencyControllerOtimistic::per_row_finish(TransactionF * transaction){
+void ConcurrencyManagerOtimistic::per_row_finish(TransactionF * transaction){
 if(transaction->isValidated()) {
 		// advance the global timestamp and get the end_ts
 		transaction->getTimestampCommit();
   }
 }
-void ConcurrencyControllerOtimistic::central_finish(TransactionF * transaction){
+void ConcurrencyManagerOtimistic::central_finish(TransactionF * transaction){
 set_ent * wset;
 	set_ent * rset;
 	get_rw_set(transaction, rset, wset);
@@ -279,7 +279,7 @@ set_ent * wset;
   sem_post(&_semaphore);
 	}
 }
-void ConcurrencyControllerOtimistic::get_rw_set(TransactionF * transaction, set_ent * &rset, set_ent *& wset) {
+void ConcurrencyManagerOtimistic::get_rw_set(TransactionF * transaction, set_ent * &rset, set_ent *& wset) {
 	wset = (set_ent*) mem_allocator.alloc(sizeof(set_ent));
 	rset = (set_ent*) mem_allocator.alloc(sizeof(set_ent));
 	wset->set_size = transaction->getWriteSet().size();
@@ -305,7 +305,7 @@ void ConcurrencyControllerOtimistic::get_rw_set(TransactionF * transaction, set_
 	assert(m == rset->set_size);
 	//return RCOK;
 }
-bool ConcurrencyControllerOtimistic::test_valid(set_ent * set1, set_ent * set2) {
+bool ConcurrencyManagerOtimistic::test_valid(set_ent * set1, set_ent * set2) {
 	for (UInt32 i = 0; i < set1->set_size; i++)
 		for (UInt32 j = 0; j < set2->set_size; j++) {
 			if (set1->rows[i] == set2->rows[j]) {

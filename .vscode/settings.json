@@ -60,6 +60,7 @@
         "typeinfo": "cpp",
         "bit": "cpp",
         "variant": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "iomanip": "cpp"
     }
 }

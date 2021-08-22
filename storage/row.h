@@ -19,6 +19,10 @@
 
 #include <cassert>
 #include "global.h"
+#include "table.h"
+#include "catalog.h"
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 #define DECL_SET_VALUE(type) \
 	void set_value(int col_id, type value);
@@ -130,6 +134,20 @@ private:
 	uint64_t		_part_id;
 	bool part_info;
 	uint64_t _row_id;
+
+	friend class boost::serialization::access;
+    template<class Archive>
+        void serialize(Archive &ar, const unsigned int version){
+            ar &_primary_key; //TODO pointer
+            ar &_part_id; //TODO pointer
+			ar &_row_id; //TODO pointer
+			ar &table;
+			//ar &*data; //TODO pointer
+        }
+	friend std::ostream & operator<<(std::ostream &os, const row_t &row){
+                return os << row._primary_key << ' ' << row._part_id << ' ' <<  row._row_id << ' ' << row.table <<'\n';
+    } 
+
 };
 
 #endif

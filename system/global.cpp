@@ -61,6 +61,7 @@ Logger logger;
 TimeTable time_table;
 interfaceFramework* framework;
 interfaceOrder* order;
+interfaceGroupMembership* groupMembership;
 
 bool volatile warmup_done = false;
 bool volatile enable_thread_mem_pool = false;

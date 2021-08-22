@@ -1,6 +1,5 @@
 #include "order.h"
 #include "utils/transaction.h"
-#include "utils/metadata.cpp"
 #include "utils/version.h"
 #include <iostream>
 
@@ -18,14 +17,14 @@ void Order::lockRelease(Content* content){
      clock->releaseContent(content);
 }
 
-void Order::timestampStartup(TransactionF* transaction, Metadata metadata){
+void Order::timestampStartup(TransactionF* transaction){
      printf("timestamp transaction startup %lu \n", transaction->getId());
      fflush(stdout);
 
      clock->updateClock();
      transaction->setTimestampStart(clock->getTime());
 }
-void Order::timestampCommit(TransactionF* transaction, Metadata metadata){
+void Order::timestampCommit(TransactionF* transaction){
      printf("timestamp transaction commit %lu \n", transaction->getId());
      fflush(stdout);
 
