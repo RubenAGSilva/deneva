@@ -11,27 +11,54 @@ namespace configuration{
     enum CC_ALGO{LOCK, OTIMISTIC};
     enum CLOCK_ALGO{DENEVA_CLOCKS};
     enum COMMUNICATION_ALGO{SOCKET};
+    enum MODULES{DENEVA};
 
     const CC_ALGO ccAlgo = LOCK;
     const COMMUNICATION_ALGO commAlgo = SOCKET;
     const CLOCK_ALGO clockAlgo = DENEVA_CLOCKS;
+    const MODULES module = DENEVA;
+
+    static interfaceFramework* initFramework(uint64_t nodeId){
+        switch(ccAlgo){
+            case LOCK:{
+                FrameworkPessimisticDeneva* framework = new FrameworkPessimisticDeneva(nodeId);
+                return framework;
+                break;
+            }case OTIMISTIC:{
+                FrameworkOptimisicDeneva* framework = new FrameworkOptimisicDeneva(nodeId);
+                return framework;
+                break;
+            }
+        }
+    }
+
 
     static interfaceGroupMembership* initGroupModule(){
         //switch case with different groupmembership modules
-        GroupMembership* g = new GroupMembership();
-        return g;
+        switch(module){
+            case DENEVA:
+                GroupMembership* g = new GroupMembership();
+                return g;   
+        }
+        
     }
 
     static interfaceReplication* initReplicationModule(){
         //switch case with different replication modules
-        Replication* r = new Replication();
-        return r;
+        switch(module){
+            case DENEVA:
+                Replication* r = new Replication();
+                return r;
+        }
     }
     
     static interfaceOrder* initOrderModule(Node* node, InterfaceVersion* clockVersion){
         //switch case with different order modules
-        Order* o = new Order(node ,clockVersion);
-        return o;
+        switch(module){
+            case DENEVA:
+                Order* o = new Order(node ,clockVersion);
+                return o;
+        }
     }
 
     static InterfaceVersion* initClockVersion(){

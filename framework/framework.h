@@ -38,8 +38,7 @@ class interfaceFramework{
         virtual void initContent(row_t* row) = 0;
 };
 
-
-class Framework : public interfaceFramework{
+class FrameworkPessimisticDeneva : public interfaceFramework{
 
     private:
         interfaceReplication* replication;
@@ -50,8 +49,8 @@ class Framework : public interfaceFramework{
         bool local(TransactionF* transaction); 
 
     public:
-        Framework(uint64_t nodeId1);
-        ~Framework(){}
+        FrameworkPessimisticDeneva(uint64_t nodeId1);
+        ~FrameworkPessimisticDeneva(){}
         void beginTransaction(TransactionF* transaction) override;
         void endTransaction(TransactionF* transaction) override;
         void read(TransactionF* transaction, uint64_t key) override;
@@ -65,5 +64,34 @@ class Framework : public interfaceFramework{
         map<uint64_t,TransactionF*> getMapOfTransactions(){return mapOfTransactions;}
         void addTransaction(TransactionF* transaction) override;
         TransactionF* getTransaction(uint64_t transactionId) override;
+        void statsCommit(TransactionF* transaction);
+};
+
+class FrameworkOptimisicDeneva : public interfaceFramework{
+    private:
+        interfaceReplication* replication;
+        InterfaceConcurrencyManager* concurrencyManager;
+        uint64_t nodeId;
+        map<uint64_t,TransactionF*> mapOfTransactions;
+        pthread_mutex_t* transactionMapMutex;
+        bool local(TransactionF* transaction); 
+
+    public:
+        FrameworkOptimisicDeneva(uint64_t nodeId1);
+        ~FrameworkOptimisicDeneva(){}
+        void beginTransaction(TransactionF* transaction) override;
+        void endTransaction(TransactionF* transaction) override;
+        void read(TransactionF* transaction, uint64_t key) override;
+        void write(TransactionF* transaction, uint64_t key, row_t* row) override;
+        void commit(TransactionF* transaction) override;
+        void abort(TransactionF* transaction) override;
+        bool validate(TransactionF* transaction) override;
+        void replicate(TransactionF* transaction) override;
+        void initContent(row_t* row) override;
+
+        map<uint64_t,TransactionF*> getMapOfTransactions(){return mapOfTransactions;}
+        void addTransaction(TransactionF* transaction) override;
+        TransactionF* getTransaction(uint64_t transactionId) override;
+        void statsCommit(TransactionF* transaction);
 };
 #endif

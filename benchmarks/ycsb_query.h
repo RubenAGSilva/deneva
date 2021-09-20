@@ -53,6 +53,7 @@ class YCSBQueryGenerator : public QueryGenerator {
 public:
   void init();
   BaseQuery * create_query(Workload * h_wl, uint64_t home_partition_id);
+  BaseQuery * gen_requests_zipf(uint64_t home_partition_id, Workload * h_wl, access_t op); // --- test
 
 private:
 	BaseQuery * gen_requests_hot(uint64_t home_partition_id, Workload * h_wl);

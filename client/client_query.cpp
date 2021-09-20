@@ -96,7 +96,12 @@ Client_query_queue::initQueriesParallel() {
 #else
   for ( UInt32 server_id = 0; server_id < g_servers_per_client; server_id ++) {
     for (UInt32 query_id = request_cnt / g_init_parallelism * tid; query_id < final_request; query_id ++) {
-      queries[server_id][query_id] = gen->create_query(_wl,server_id+g_server_start_node);
+      queries[server_id][query_id] = gen->create_query(_wl,server_id+g_server_start_node); // --- test
+      // if((query_id + server_id) % 2 == 0){
+      //   queries[server_id][query_id] = gen->gen_requests_zipf(server_id+g_server_start_node, _wl, WR);
+      // }else{
+      //   queries[server_id][query_id] = gen->gen_requests_zipf(server_id+g_server_start_node, _wl, RD);
+      // }
     }
   }
 #endif

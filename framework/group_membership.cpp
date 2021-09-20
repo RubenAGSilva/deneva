@@ -19,13 +19,13 @@ void GroupMembership::read_ifconfig(const char * ifaddr_file) {
 	ifaddr = new char *[g_total_node_cnt];
 
 	uint64_t cnt = 0;
-  printf("--Reading ifconfig file: %s\n",ifaddr_file);
+  //printf("--Reading ifconfig file: %s\n",ifaddr_file);
 	ifstream fin(ifaddr_file);
 	string line;
   while (getline(fin, line)) {
 		ifaddr[cnt] = new char[line.length()+1];
     strcpy(ifaddr[cnt],&line[0]);
-		printf("%ld: %s\n",cnt,ifaddr[cnt]);
+		//printf("%ld: %s\n",cnt,ifaddr[cnt]);
 		cnt++;
 	}
   assert(cnt == g_total_node_cnt);
@@ -50,13 +50,13 @@ uint64_t GroupMembership::get_port_id(uint64_t src_node_id, uint64_t dest_node_i
   port_id += src_node_id;
   port_id += send_thread_id * g_total_node_cnt * g_total_node_cnt;
   port_id += TPORT_PORT;
-  printf("--Port ID:  %ld, %ld -> %ld : %ld\n",send_thread_id,src_node_id,dest_node_id,port_id);
+  //printf("--Port ID:  %ld, %ld -> %ld : %ld\n",send_thread_id,src_node_id,dest_node_id,port_id);
   return port_id;
 }
 
 list<Node*> GroupMembership::getReplicationTargets(uint64_t nodeId){ 
-    printf("get replication targets \n");
-    fflush(stdout);
+    //printf("get replication targets \n");
+    //fflush(stdout);
 
     list<Node*> replicaNodes = list<Node*>();
     map<uint64_t,Node*>::iterator it;
@@ -72,8 +72,8 @@ list<Node*> GroupMembership::getReplicationTargets(uint64_t nodeId){
 
 
 int GroupMembership::getTimestamper(){
-    printf("get timestamper \n");
-    fflush(stdout);
+    //printf("get timestamper \n");
+    //fflush(stdout);
 
     map<uint64_t,Node*>::iterator it;
 
@@ -86,8 +86,8 @@ int GroupMembership::getTimestamper(){
 }
 
 int GroupMembership::getCoordinator(TransactionF* transaction){
-    printf("get coordinator \n");
-    fflush(stdout);
+    //printf("get coordinator \n");
+    //fflush(stdout);
 
     map<uint64_t,Node*>::iterator it;
 

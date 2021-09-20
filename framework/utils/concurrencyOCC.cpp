@@ -27,8 +27,8 @@ Content* CC_O::write(TransactionF* transaction, Content* content1){
 	content = content1;
 	
 	if (PER_ROW_VALID) {
-		assert(transaction->getTimestampCommit() > wts);
-		wts = transaction->getTimestampCommit();
+		//assert(transaction->getTimestampStartup() > wts);
+		wts = transaction->getTimestampStartup();
 	}
 	return content1;
 }

@@ -39,6 +39,7 @@ public:
 	void print(FILE * outf, bool prog);
 	void print_client(FILE * outf, bool prog);
 	void clear();
+  void printFramework(FILE * outf);
 
 	char _pad2[CL_SIZE];
   
@@ -49,6 +50,19 @@ public:
 
   uint64_t parts_touched;
 
+  //Framework
+  uint64_t framework_txn_cnt;
+  double framework_txn_runtime;
+  double framework_txn_avg_time;
+  uint64_t framework_local_commit_cnt;
+  uint64_t framework_local_abort_cnt;
+  uint64_t framework_remote_commit_cnt;
+  uint64_t framework_remote_abort_cnt;
+  uint64_t framework_total_commit_cnt;
+  uint64_t framework_total_abort_cnt;
+
+
+  
   // Execution
   uint64_t txn_cnt;
   uint64_t remote_txn_cnt;

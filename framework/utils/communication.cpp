@@ -12,8 +12,8 @@ Communication::Communication(uint64_t id){
 void Communication::initSendSocket(uint64_t thread_id, char** ifaddr1, bool isClient){
     ifaddr = ifaddr1;
     uint64_t port_id;
-    printf("Im running: %u, but this node is: %lu\n", g_node_id, nodeId);
-    fflush(stdout);
+    //printf("Im running: %u, but this node is: %lu\n", g_node_id, nodeId);
+    //fflush(stdout);
     if(isClient){
       port_id = get_port_id(g_node_id, nodeId,thread_id % g_client_send_thread_cnt);
     }else{
@@ -104,8 +104,8 @@ void Communication::get(MessageF message){
     MessageType type = message.getMessageType();
     TransactionF transaction = message.getTransaction();
     TransactionF* transactionptr = new TransactionF(transaction);
-    printf("-Received transaction Id: %lu\n", transactionptr->getId());
-    fflush(stdout);
+    //printf("-Received transaction Id: %lu\n", transactionptr->getId());
+    //fflush(stdout);
     switch(type){
         case REPLICATE_WRITES:
           groupMembership->getNodes().at(message.getSenderNodeId())->addContents(transaction.getWriteSet()); //replicate writes
@@ -153,7 +153,7 @@ void Communication::sendMessage(MessageF message, InterfaceCommunication* commun
     result = socket->sock.send(&buf,NN_MSG,NN_DONTWAIT);
     if(result<0){printf("ERROR %i\n", result); fflush(stdout);}
     offset  += result;
-    printf("-Sending in total: %lu | sent now datasize of: %lu\n", dataSize, offset);
+    //printf("-Sending in total: %lu | sent now datasize of: %lu\n", dataSize, offset);
   }
 
   }
@@ -161,8 +161,8 @@ void Communication::sendMessage(MessageF message, InterfaceCommunication* commun
 
 void Communication::recvTransaction(){
 
-  printf("Thread starting, receiving transactions \n");
-  fflush(stdout);
+  //printf("Thread starting, receiving transactions \n");
+  //fflush(stdout);
 
   while(true){ //thread running this
     MessageF message;
@@ -181,8 +181,8 @@ void Communication::recvTransaction(){
           complete = true;
         }
       
-        printf("---Recevied, bytes: %i\n", result);
-        fflush(stdout);
+        //printf("---Recevied, bytes: %i\n", result);
+        //fflush(stdout);
       
         std::istringstream ifs((char*) recv);
         boost::archive::text_iarchive ia(ifs);
@@ -191,12 +191,12 @@ void Communication::recvTransaction(){
       
         get(message);
         
-        printf("Received Message\n");
-        printf("transaction readset size: %lu | transactionNodeId: %lu | transactionTSStartup: %lu\n",message.getTransaction().getReadSet().size(), message.getTransaction().getNodeId(), message.getTransaction().getTimestampStartup());
-        fflush(stdout);  
+        //printf("Received Message\n");
+        //printf("transaction readset size: %lu | transactionNodeId: %lu | transactionTSStartup: %lu\n",message.getTransaction().getReadSet().size(), message.getTransaction().getNodeId(), message.getTransaction().getTimestampStartup());
+        //fflush(stdout);  
        }catch(...){
-         printf("-___-Problem receiving message\n");
-         fflush(stdout);
+         //printf("-___-Problem receiving message\n");
+         //fflush(stdout);
        }
     }
   }

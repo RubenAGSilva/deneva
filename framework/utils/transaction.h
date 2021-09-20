@@ -65,6 +65,10 @@
 
 
         public:
+            
+            //stats
+            uint64_t statStartTs = 0;
+
 
             //int MODEL_ID=1;
             int volatile lockReady;

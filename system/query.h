@@ -49,6 +49,7 @@ class QueryGenerator {
 public:
     virtual ~QueryGenerator() {}
     virtual BaseQuery * create_query(Workload * h_wl, uint64_t home_partition_id) = 0;
+    virtual BaseQuery * gen_requests_zipf(uint64_t home_partition_id, Workload * h_wl, access_t op) = 0; // --- test
 };
 
 // All the queries for a particular thread.

@@ -45,6 +45,7 @@ Content* CC_Lock::write(TransactionF* transaction, Content* content1){
 }
 
 bool CC_Lock::validate(TransactionF* transaction){
+    transaction->setValidated(true);
     return true;
 }
 
@@ -221,8 +222,9 @@ void CC_Lock::releaseControl(TransactionF* transaction){
       // If CC is NO_WAIT or WAIT_DIE, txn should own this lock
       // What about Calvin?
 #if CC_ALG == NO_WAIT
-      assert(owner_cnt > 0);
-      owner_cnt--;
+      if(owner_cnt > 0){
+        owner_cnt--;
+      }
       if (owner_cnt == 0) {
         lockType = LOCK_NONE;
       }

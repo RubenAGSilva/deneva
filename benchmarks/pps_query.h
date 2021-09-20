@@ -29,6 +29,7 @@ class PPSClientQueryMessage;
 class PPSQueryGenerator : public QueryGenerator {
 public:
   BaseQuery * create_query(Workload * h_wl, uint64_t home_partition_id);
+  BaseQuery * gen_requests_zipf(uint64_t home_partition_id, Workload * h_wl, access_t op);
 
 private:
 	BaseQuery * gen_requests_parts(uint64_t home_partition_id);

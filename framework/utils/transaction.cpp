@@ -10,19 +10,20 @@ TransactionF::TransactionF(uint64_t id1, uint64_t newNodeId){
     id=id1;
     nodeId = newNodeId;
     locksDetained = std::list<uint64_t>();
+    timestampCommit = 0;
 }
 
 void TransactionF::addToReadSet(Content* content){
     readset.push_back(content);
-    printf("adding lock :%lu on transaction : %lu\n",content->getKey(), id);
-    fflush(stdout);
+    //printf("adding lock :%lu on transaction : %lu\n",content->getKey(), id);
+    //fflush(stdout);
     locksDetained.push_back(content->getKey());
 }
 
 void TransactionF::addToWriteSet(Content* content){
     writeset.push_back(content);
-    printf("adding lock :%lu\n",content->getKey());
-    fflush(stdout);
+    //printf("adding lock :%lu\n",content->getKey());
+    //fflush(stdout);
     locksDetained.push_back(content->getKey());
 }
 

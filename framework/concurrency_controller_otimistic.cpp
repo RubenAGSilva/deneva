@@ -27,19 +27,21 @@ void ConcurrencyManagerOtimistic::write(TransactionF* transaction, uint64_t key,
 
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
     Content* content = new Content(key, row);
-    Content* returnContent = concurrencyControl->write(transaction, content);
+    //Content* returnContent = 
+	concurrencyControl->write(transaction, content);
 
-	printf("write %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
-    fflush(stdout);
+	//printf("write %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
+    //fflush(stdout);
 }
 
 void ConcurrencyManagerOtimistic::read(TransactionF* transaction, uint64_t key) {
 	
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
-    Content* returnContent = concurrencyControl->read(transaction);
+    //Content* returnContent = 
+	concurrencyControl->read(transaction);
 
-	printf("read %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
-    fflush(stdout);
+	//printf("read %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
+    //fflush(stdout);
 }
 
 bool ConcurrencyManagerOtimistic::validate(TransactionF* transaction) {
@@ -48,14 +50,14 @@ bool ConcurrencyManagerOtimistic::validate(TransactionF* transaction) {
 	
 #if PER_ROW_VALID
 	if(per_row_validate(transaction)){
-		printf("validate transaction %lu \n", transaction->getId());
-		fflush(stdout);
+		//printf("validate transaction %lu \n", transaction->getId());
+		//fflush(stdout);
 		transaction->setValidated(true);
 	}
 #else
 	if(central_validate(transaction)){
-		printf("validate transaction %lu \n", transaction->getId());
-		fflush(stdout);
+		//printf("validate transaction %lu \n", transaction->getId());
+		//fflush(stdout);
 		transaction->setValidated(true);
 	}
 #endif
@@ -64,9 +66,14 @@ bool ConcurrencyManagerOtimistic::validate(TransactionF* transaction) {
 
 void ConcurrencyManagerOtimistic::commit(TransactionF* transaction) {
 	list<Content*> listOfOperations=transaction->getWriteSet();
-
     for(Content* c : listOfOperations){
-        concurrencyControlMap.at(c->getKey())->commitWrites(); //make durable the writes
+		try{
+			concurrencyControlMap.at(c->getKey())->commitWrites(); //make durable the writes
+		}catch(std::out_of_range){
+			//printf("---------- transaction: %lu -  out of range\n", transaction->getId());
+			//fflush(stdout);
+		}
+
     }
 }
 
@@ -111,6 +118,7 @@ bool ConcurrencyManagerOtimistic::per_row_validate(TransactionF * transaction){
         lock_cnt ++;
         concurrencyControlMap.at(c->getKey())->getControl(transaction, RD); // latch()
         ok = concurrencyControlMap.at(c->getKey())->validate(transaction);
+		concurrencyControlMap.at(c->getKey())->releaseControl(transaction);
     }
 	for(Content* c : listWriteSet){
         if(!ok)
@@ -118,6 +126,7 @@ bool ConcurrencyManagerOtimistic::per_row_validate(TransactionF * transaction){
 		lock_cnt ++;
         concurrencyControlMap.at(c->getKey())->getControl(transaction, WR); // latch()
         ok = concurrencyControlMap.at(c->getKey())->validate(transaction);
+		concurrencyControlMap.at(c->getKey())->releaseControl(transaction);
 	}
 
 	return ok;

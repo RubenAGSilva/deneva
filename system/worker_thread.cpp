@@ -504,16 +504,19 @@ RC WorkerThread::process_rtxn(Message * msg) {
 					// Only set new txn_id when txn first starts
           txn_id = get_next_txn_id();
           msg->txn_id = txn_id;
-          
-          printf("____ txnid: %lu | nodeCnt: %u | nodeId: %lu\n", txn_id, g_node_cnt, txn_id%g_node_cnt);
-          fflush(stdout);
+
+          // //---test
+          // if(txn_id != 0 && txn_id != 1){
+          //   return rc;
+          // }
+
 
           //FRAMEWORK:
           TransactionF* transactionF = new TransactionF(txn_id, txn_id%g_node_cnt);
           framework->beginTransaction(transactionF);
           transaction = getTransaction(msg); //maybe unnecessary
 
-          sleep(2);
+          //sleep(0.5); // ---test
 
 					// Put txn in txn_table
           txn_man = txn_table.get_transaction_manager(get_thd_id(),txn_id,0);

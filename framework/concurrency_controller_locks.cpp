@@ -12,16 +12,20 @@ void ConcurrencyManagerLocks::write(TransactionF* transaction, uint64_t key, row
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
     Content* content = new Content(key, row);
     Content * returnContent = concurrencyControl->write(transaction, content);
-    printf("write %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
-    fflush(stdout);
     
-    if(returnContent->getValue() == NULL){ //couldnt get the lock
+    
+    if(returnContent->getValue() == NULL){ //couldnt get the lock -> abort
         delete returnContent;
+        //printf("CANT GET LOCK for transaction %lu of key: %lu\n", transaction->getId(), key);
+        //fflush(stdout);
         return;
     }
 
+    //printf("write %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
+    //fflush(stdout);
+
     #if ISOLATION_LEVEL == READ_UNCOMMITTED // release lock after write - only in read uncommitted
-        concurrencyControl->releaseControl(transaction);
+        concurrencyControl->releaseControl(transaction); 
     #endif
 }
 
@@ -29,13 +33,16 @@ void ConcurrencyManagerLocks::read(TransactionF* transaction, uint64_t key){
 
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
     Content* returnContent = concurrencyControl->read(transaction); 
-    printf("read %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
-    fflush(stdout);
 
     if(returnContent->getValue() == NULL){ //couldnt get the lock
         delete returnContent;
+        //printf("CANT GET LOCK\n");
+        //fflush(stdout);
         return;
     }
+
+    //printf("read %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
+    //fflush(stdout);
 
     #if ISOLATION_LEVEL == READ_COMMITTED || ISOLATION_LEVEL == READ_UNCOMMITTED // release lock after read
         concurrencyControl->releaseControl(transaction);

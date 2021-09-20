@@ -39,6 +39,7 @@
 #include "maat.h"
 #include "client_query.h"
 #include "../framework/framework.h"
+#include "configuration.cpp"
 
 void network_test();
 void network_test_recv();
@@ -95,8 +96,7 @@ int main(int argc, char* argv[])
   
   printf("initializing transactional framework");
   fflush(stdout);
-  Framework frame = Framework(g_node_id); // meter como attributo possivelmente !
-  framework = &frame;
+  framework = configuration::initFramework(g_node_id);
 
 	Workload * m_wl;
 	switch (WORKLOAD) {

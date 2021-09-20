@@ -18,15 +18,15 @@ void Order::lockRelease(Content* content){
 }
 
 void Order::timestampStartup(TransactionF* transaction){
-     printf("timestamp transaction startup %lu \n", transaction->getId());
-     fflush(stdout);
+     //printf("timestamp transaction startup %lu \n", transaction->getId());
+     //fflush(stdout);
 
      clock->updateClock();
      transaction->setTimestampStart(clock->getTime());
 }
 void Order::timestampCommit(TransactionF* transaction){
-     printf("timestamp transaction commit %lu \n", transaction->getId());
-     fflush(stdout);
+     //printf("timestamp transaction commit %lu \n", transaction->getId());
+     //fflush(stdout);
 
      clock->updateClock();
      transaction->setTimestampCommit(clock->getTime());

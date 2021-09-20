@@ -9,7 +9,7 @@
 #define THREAD_CNT 1
 #define REM_THREAD_CNT THREAD_CNT
 #define SEND_THREAD_CNT THREAD_CNT
-#define CORE_CNT 3
+#define CORE_CNT 1
 // PART_CNT should be at least NODE_CNT
 #define PART_CNT NODE_CNT
 #define CLIENT_NODE_CNT 1
@@ -167,7 +167,7 @@
 #define ACCESS_PERC 0.03
 #define INIT_PARALLELISM 1
 #define SYNTH_TABLE_SIZE 65536
-#define ZIPF_THETA 0.3
+#define ZIPF_THETA 0.3 // 0.3
 #define TXN_WRITE_PERC 0.0
 #define TUP_WRITE_PERC 0.0
 #define SCAN_PERC           0

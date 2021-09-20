@@ -52,6 +52,17 @@ void Stats_thd::clear() {
 
   total_runtime=0;
 
+  //framework
+  framework_txn_cnt = 0;
+  framework_txn_runtime = 0;
+  framework_txn_avg_time = 0;
+  framework_local_commit_cnt = 0;
+  framework_local_abort_cnt = 0;
+  framework_remote_commit_cnt = 0;
+  framework_remote_abort_cnt = 0;
+  framework_total_commit_cnt = 0;
+  framework_total_abort_cnt = 0;
+
   // Execution
   txn_cnt=0;
   remote_txn_cnt=0;
@@ -493,7 +504,7 @@ void Stats_thd::print(FILE * outf, bool prog) {
   ,parts_touched
   ,avg_parts_touched
   );
-
+  printFramework(outf);
   // Breakdown
   fprintf(outf,
   ",ts_alloc_time=%f"
@@ -1193,6 +1204,16 @@ void Stats_thd::combine(Stats_thd * stats) {
   first_start_commit_latency.append(stats->first_start_commit_latency);
   start_abort_commit_latency.append(stats->start_abort_commit_latency);
   client_client_latency.append(stats->client_client_latency);
+  //framework
+  framework_txn_cnt += stats->framework_txn_cnt;
+  framework_local_commit_cnt += stats->framework_local_commit_cnt;
+  framework_local_abort_cnt += stats->framework_local_abort_cnt;
+  framework_total_commit_cnt += stats->framework_total_commit_cnt;
+  framework_total_abort_cnt += stats->framework_total_abort_cnt;
+  framework_remote_commit_cnt += stats->framework_remote_commit_cnt;
+  framework_remote_abort_cnt += stats->framework_remote_abort_cnt;
+  framework_txn_runtime += stats->framework_txn_runtime;
+
   // Execution
   txn_cnt+=stats->txn_cnt;
   remote_txn_cnt+=stats->remote_txn_cnt;
@@ -1571,6 +1592,34 @@ void Stats::print(bool prog) {
 	if (output_file != NULL) {
 		fclose(outf);
   }
+
+}
+
+void Stats_thd::printFramework(FILE * outf){
+
+  if(framework_txn_cnt > 0) {
+    framework_txn_avg_time = framework_txn_runtime / framework_txn_cnt;
+  }
+
+  fprintf(outf,
+    ",FRAMEWORK:framework_txn_cnt= %ld"
+    ",framework_local_commit_cnt = %ld"
+    ",framework_total_commit_cnt= %ld"
+    ",framework_local_abort_cnt = %ld"
+    ",framework_total_abort_cnt= %ld"
+    ",framework_txn_runtime = %f"
+    ",framework_txn_runtime_avg = %f"
+    // Framework
+    ,framework_txn_cnt
+    ,framework_local_commit_cnt
+    ,framework_total_commit_cnt
+    ,framework_local_abort_cnt
+    ,framework_total_abort_cnt
+    ,framework_txn_runtime/ BILLION
+    ,framework_txn_avg_time/ BILLION
+  );
+  fflush(stdout);
+
 
 }
 
