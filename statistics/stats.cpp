@@ -44,6 +44,10 @@ void Stats_thd::init(uint64_t thd_id) {
 	first_start_commit_latency.init(g_max_txn_per_part,ArrIncr);
 	start_abort_commit_latency.init(g_max_txn_per_part,ArrIncr);
 
+  framework_first_start_commit_latency.init(g_max_txn_per_part,ArrIncr);
+  framework_last_start_commit_latency.init(g_max_txn_per_part,ArrIncr);
+  framework_start_abort_commit_latency.init(g_max_txn_per_part,ArrIncr);
+
     clear();
 
 }
@@ -300,7 +304,9 @@ void Stats_thd::clear() {
     first_start_commit_latency.clear();
     start_abort_commit_latency.clear();
 
-
+  framework_last_start_commit_latency.clear();
+  framework_first_start_commit_latency.clear();
+  framework_start_abort_commit_latency.clear();
 }
 
 void Stats_thd::print_client(FILE * outf, bool prog) {
@@ -1090,6 +1096,10 @@ void Stats_thd::print(FILE * outf, bool prog) {
   first_start_commit_latency.quicksort(0,first_start_commit_latency.cnt-1);
   start_abort_commit_latency.quicksort(0,start_abort_commit_latency.cnt-1);
 
+  framework_last_start_commit_latency.quicksort(0,last_start_commit_latency.cnt-1);
+  framework_first_start_commit_latency.quicksort(0,first_start_commit_latency.cnt-1);
+  framework_start_abort_commit_latency.quicksort(0,start_abort_commit_latency.cnt-1);
+
   fprintf(outf,
           ",fscl0=%f"
           ",fscl1=%f"
@@ -1189,6 +1199,108 @@ void Stats_thd::print(FILE * outf, bool prog) {
           ,(double)start_abort_commit_latency.get_avg() / BILLION
           ,start_abort_commit_latency.cnt
           );
+
+
+fprintf(outf,
+          ",FRAMEWORKfscl0=%f"
+          ",FRAMEWORKfscl1=%f"
+          ",FRAMEWORKfscl10=%f"
+          ",FRAMEWORKfscl25=%f"
+          ",FRAMEWORKfscl50=%f"
+          ",FRAMEWORKfscl75=%f"
+          ",FRAMEWORKfscl90=%f"
+          ",FRAMEWORKfscl95=%f"
+          ",FRAMEWORKfscl96=%f"
+          ",FRAMEWORKfscl97=%f"
+          ",FRAMEWORKfscl98=%f"
+          ",FRAMEWORKfscl99=%f"
+          ",FRAMEWORKfscl100=%f"
+          ",FRAMEWORKfscl_avg=%f"
+          ",FRAMEWORKfscl_cnt=%ld"
+          ,(double)framework_first_start_commit_latency.get_idx(0) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(1) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(10) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(25) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(50) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(75) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(90) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(95) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(96) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(97) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(98) / BILLION
+          ,(double)framework_first_start_commit_latency.get_percentile(99) / BILLION
+          ,(double)framework_first_start_commit_latency.get_idx(framework_first_start_commit_latency.cnt-1) / BILLION
+          ,(double)framework_first_start_commit_latency.get_avg() / BILLION
+          ,framework_first_start_commit_latency.cnt
+          );
+
+  fprintf(outf,
+          ",FRAMEWORKlscl0=%f"
+          ",FRAMEWORKlscl1=%f"
+          ",FRAMEWORKlscl10=%f"
+          ",FRAMEWORKlscl25=%f"
+          ",FRAMEWORKlscl50=%f"
+          ",FRAMEWORKlscl75=%f"
+          ",FRAMEWORKlscl90=%f"
+          ",FRAMEWORKlscl95=%f"
+          ",FRAMEWORKlscl96=%f"
+          ",FRAMEWORKlscl97=%f"
+          ",FRAMEWORKlscl98=%f"
+          ",FRAMEWORKlscl99=%f"
+          ",FRAMEWORKlscl100=%f"
+          ",FRAMEWORKlscl_avg=%f"
+          ",FRAMEWORKlscl_cnt=%ld"
+          ,(double)framework_last_start_commit_latency.get_idx(0) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(1) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(10) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(25) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(50) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(75) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(90) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(95) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(96) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(97) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(98) / BILLION
+          ,(double)framework_last_start_commit_latency.get_percentile(99) / BILLION
+          ,(double)framework_last_start_commit_latency.get_idx(framework_last_start_commit_latency.cnt-1) / BILLION
+          ,(double)framework_last_start_commit_latency.get_avg() / BILLION
+          ,framework_last_start_commit_latency.cnt
+          );
+
+
+  fprintf(outf,
+          ",FRAMEWORKsacl0=%f"
+          ",FRAMEWORKsacl1=%f"
+          ",FRAMEWORKsacl10=%f"
+          ",FRAMEWORKsacl25=%f"
+          ",FRAMEWORKsacl50=%f"
+          ",FRAMEWORKsacl75=%f"
+          ",FRAMEWORKsacl90=%f"
+          ",FRAMEWORKsacl95=%f"
+          ",FRAMEWORKsacl96=%f"
+          ",FRAMEWORKsacl97=%f"
+          ",FRAMEWORKsacl98=%f"
+          ",FRAMEWORKsacl99=%f"
+          ",FRAMEWORKsacl100=%f"
+          ",FRAMEWORKsacl_avg=%f"
+          ",FRAMEWORKsacl_cnt=%ld"
+          ,(double)framework_start_abort_commit_latency.get_idx(0) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(1) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(10) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(25) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(50) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(75) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(90) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(95) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(96) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(97) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(98) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_percentile(99) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_idx(framework_start_abort_commit_latency.cnt-1) / BILLION
+          ,(double)framework_start_abort_commit_latency.get_avg() / BILLION
+          ,framework_start_abort_commit_latency.cnt
+          );
+
   }
 
   //first_start_commit_latency.print(outf);
@@ -1204,6 +1316,11 @@ void Stats_thd::combine(Stats_thd * stats) {
   first_start_commit_latency.append(stats->first_start_commit_latency);
   start_abort_commit_latency.append(stats->start_abort_commit_latency);
   client_client_latency.append(stats->client_client_latency);
+
+  framework_last_start_commit_latency.append(stats->framework_first_start_commit_latency);
+  framework_first_start_commit_latency.append(stats->framework_first_start_commit_latency);
+  framework_start_abort_commit_latency.append(stats->framework_start_abort_commit_latency);
+
   //framework
   framework_txn_cnt += stats->framework_txn_cnt;
   framework_local_commit_cnt += stats->framework_local_commit_cnt;
@@ -1600,9 +1717,13 @@ void Stats_thd::printFramework(FILE * outf){
   if(framework_txn_cnt > 0) {
     framework_txn_avg_time = framework_txn_runtime / framework_txn_cnt;
   }
+  double framework_tput = 0;
+  if(total_runtime > 0) 
+    framework_tput = framework_txn_cnt / (total_runtime / BILLION);
 
   fprintf(outf,
-    ",FRAMEWORK:framework_txn_cnt= %ld"
+    ",FRAMEWORK:framework_tput= %f"
+    ".framework_txn_cnt= %ld"
     ",framework_local_commit_cnt = %ld"
     ",framework_total_commit_cnt= %ld"
     ",framework_local_abort_cnt = %ld"
@@ -1610,6 +1731,7 @@ void Stats_thd::printFramework(FILE * outf){
     ",framework_txn_runtime = %f"
     ",framework_txn_runtime_avg = %f"
     // Framework
+    ,framework_tput
     ,framework_txn_cnt
     ,framework_local_commit_cnt
     ,framework_total_commit_cnt

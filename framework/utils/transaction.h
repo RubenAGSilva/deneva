@@ -68,6 +68,7 @@
             
             //stats
             uint64_t statStartTs = 0;
+            uint64_t restart_starttime = 0;
 
 
             //int MODEL_ID=1;

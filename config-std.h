@@ -110,7 +110,7 @@
 // ==== [YCSB] ====
 #define INIT_PARALLELISM			16
 #define SYNTH_TABLE_SIZE 			(THREAD_CNT*1024)
-#define ZIPF_THETA 					0
+#define ZIPF_THETA 					0.9
 #define READ_PERC 					0.5
 #define WRITE_PERC 					0.5
 #define SCAN_PERC 					0

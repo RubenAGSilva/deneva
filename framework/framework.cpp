@@ -50,6 +50,7 @@ void FrameworkPessimisticDeneva::beginTransaction(TransactionF* transaction){
 
     //stats
     transaction->statStartTs = get_sys_clock();
+    transaction->restart_starttime = transaction->statStartTs;
     INC_STATS(0, framework_txn_cnt, 1);
 }
 
@@ -142,6 +143,8 @@ void FrameworkPessimisticDeneva::abort(TransactionF* transaction){
 
         //stat
         INC_STATS(0, framework_local_abort_cnt, 1);
+        uint64_t timespan = get_sys_clock() - transaction->restart_starttime;
+        INC_STATS_ARR(0,framework_start_abort_commit_latency, timespan);
     }else{
         concurrencyManager->abort(transaction);
         transaction->setFinished(true);
@@ -194,12 +197,17 @@ TransactionF* FrameworkPessimisticDeneva::getTransaction(uint64_t transactionId)
 void FrameworkPessimisticDeneva::statsCommit(TransactionF* transaction){
     uint64_t timeCommit = get_sys_clock();
     uint64_t timespan_long  = timeCommit - transaction->statStartTs;
+    uint64_t timespan_short = timeCommit - transaction->restart_starttime;
     
     if(!local(transaction)){
         INC_STATS(0, framework_remote_commit_cnt, 1);
     }else{
         INC_STATS(0, framework_local_commit_cnt, 1);
         INC_STATS(0, framework_txn_runtime, timespan_long);
+
+        INC_STATS_ARR(0,framework_start_abort_commit_latency, timespan_short);
+        INC_STATS_ARR(0,framework_last_start_commit_latency, timespan_short);
+        INC_STATS_ARR(0,framework_first_start_commit_latency, timespan_long);
     }
 
 }
@@ -398,12 +406,17 @@ TransactionF* FrameworkOptimisicDeneva::getTransaction(uint64_t transactionId){
 void FrameworkOptimisicDeneva::statsCommit(TransactionF* transaction){
     uint64_t timeCommit = get_sys_clock();
     uint64_t timespan_long  = timeCommit - transaction->statStartTs;
+    uint64_t timespan_short = timeCommit - transaction->restart_starttime;
     
     if(!local(transaction)){
         INC_STATS(0, framework_remote_commit_cnt, 1);
     }else{
         INC_STATS(0, framework_local_commit_cnt, 1);
         INC_STATS(0, framework_txn_runtime, timespan_long);
+
+        INC_STATS_ARR(0,framework_start_abort_commit_latency, timespan_short);
+        INC_STATS_ARR(0,framework_last_start_commit_latency, timespan_short);
+        INC_STATS_ARR(0,framework_first_start_commit_latency, timespan_long);
     }
 
 }

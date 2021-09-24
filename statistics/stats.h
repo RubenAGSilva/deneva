@@ -251,6 +251,10 @@ public:
   StatsArr last_start_commit_latency;
   StatsArr start_abort_commit_latency;
 
+  StatsArr framework_first_start_commit_latency;
+  StatsArr framework_last_start_commit_latency;
+  StatsArr framework_start_abort_commit_latency;
+  
   // stats accumulated
   double lat_work_queue_time;
   double lat_msg_queue_time;

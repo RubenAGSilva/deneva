@@ -167,7 +167,7 @@
 #define ACCESS_PERC 0.03
 #define INIT_PARALLELISM 1
 #define SYNTH_TABLE_SIZE 65536
-#define ZIPF_THETA 0.3 // 0.3
+#define ZIPF_THETA 0.9 // 0.3
 #define TXN_WRITE_PERC 0.0
 #define TUP_WRITE_PERC 0.0
 #define SCAN_PERC           0
