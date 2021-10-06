@@ -22,7 +22,6 @@ Content* CC_O::read(TransactionF* transaction){
 }
 Content* CC_O::write(TransactionF* transaction, Content* content1){
 	transaction->addToWriteSet(content1);
-
 	previousContent = content;
 	content = content1;
 	
@@ -44,10 +43,10 @@ bool CC_O::validate(TransactionF* transaction){
 	else return true;
 }
 void CC_O::commitWrites(){
-	delete previousContent;
+	//delete previousContent;
 }
 void CC_O::abortWrites(){
-	delete content;
+	//delete content;
 	content = previousContent;
 }
 

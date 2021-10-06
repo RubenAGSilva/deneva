@@ -86,6 +86,8 @@ OptCC::per_row_validate(TxnManager * txn) {
 	bool ok = true;
 	int lock_cnt = 0;
 	for (uint64_t i = 0; i < txn->get_access_cnt() && ok; i++) {
+		if(!ok)
+			break;
 		lock_cnt ++;
 		txn->get_access_original_row(i)->manager->latch();
 		ok = txn->get_access_original_row(i)->manager->validate( txn->get_start_timestamp() );

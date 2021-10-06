@@ -27,9 +27,13 @@ void ConcurrencyManagerOtimistic::write(TransactionF* transaction, uint64_t key,
 
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
     Content* content = new Content(key, row);
-    //Content* returnContent = 
+    Content* returnContent = 
 	concurrencyControl->write(transaction, content);
 
+	if(returnContent->getValue() == NULL){
+        delete returnContent;
+        return;
+	}
 	//printf("write %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
     //fflush(stdout);
 }
@@ -37,8 +41,13 @@ void ConcurrencyManagerOtimistic::write(TransactionF* transaction, uint64_t key,
 void ConcurrencyManagerOtimistic::read(TransactionF* transaction, uint64_t key) {
 	
     InterfaceConcurrencyControl* concurrencyControl = concurrencyControlMap.at(key);
-    //Content* returnContent = 
+    Content* returnContent = 
 	concurrencyControl->read(transaction);
+
+	if(returnContent->getValue() == NULL){
+        delete returnContent;
+        return;
+	}
 
 	//printf("read %lu from the transaction %lu \n", returnContent->getValue()->get_primary_key(), transaction->getId());
     //fflush(stdout);
@@ -81,8 +90,13 @@ void ConcurrencyManagerOtimistic::abort(TransactionF* transaction) {
 	list<Content*> listOfOperations=transaction->getWriteSet();
 
     for(Content* c : listOfOperations){
+		try{
         concurrencyControlMap.at(c->getKey())->abortWrites(); //abort the writes
-    }
+    	}catch(std::out_of_range){
+			printf("OUT OF RANGE??\n");
+			fflush(stdout);
+		}
+	}
 }
 
 void ConcurrencyManagerOtimistic::finish(TransactionF* transaction) {
@@ -260,7 +274,7 @@ set_ent * wset;
 			act = act->next;
 		}
     if(act == NULL) {
-      assert(!transaction->isValidated());
+      //assert(!transaction->isValidated());
 		  //pthread_mutex_unlock( &latch );
       sem_post(&_semaphore);
       return;

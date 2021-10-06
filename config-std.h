@@ -84,7 +84,7 @@
 #define MIN_TS_INTVL				10000000 //10 ms
 // [OCC]
 #define MAX_WRITE_SET				10
-#define PER_ROW_VALID				true
+#define PER_ROW_VALID				false
 // [HSTORE]
 // when set to true, hstore will not access the global timestamp.
 // This is fine for single partition transactions. 

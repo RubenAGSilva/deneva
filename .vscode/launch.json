@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/rundb",
-            "args": ["-nid0"],
+            "args": ["-nid1"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

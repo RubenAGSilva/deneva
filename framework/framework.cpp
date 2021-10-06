@@ -240,7 +240,6 @@ void FrameworkOptimisicDeneva::beginTransaction(TransactionF* transaction){
     
     //--- test
     //sleep(2);
-    //stats
     
 
     if(groupMembership->getNode(nodeId)->getRole() != Role::TIMESTAMPER){ 
@@ -359,7 +358,7 @@ bool FrameworkOptimisicDeneva::validate(TransactionF* transaction){
     if(!valid){
         //printf("------- ABORT THIS TXN: %lu\n", transaction->getId());
         //fflush(stdout);
-        abort(transaction);
+        //abort(transaction);
     }
     return valid;
     //return concurrencyManager->validate(transaction);

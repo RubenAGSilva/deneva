@@ -505,7 +505,7 @@ RC WorkerThread::process_rtxn(Message * msg) {
           txn_id = get_next_txn_id();
           msg->txn_id = txn_id;
 
-          // //---test
+          // ---test
           // if(txn_id != 0 && txn_id != 1){
           //   return rc;
           // }
